@@ -6,10 +6,15 @@
 	</div>
   <div class="inner-wrapper">
     <nav-breadcrumbs :card="card"/>
-    <cards-list 
-      :card="card"
-      :hours="hours"
-    />
+    <div class="card-wrapper">
+      <today-facts :card="card"/>
+		  <tomorrow-facts :card="card"/>
+		  <current-card 
+			  :card="card"
+			  :hours="hours"
+		  />
+		  <map-card :card="card"/>
+    </div>
     <day-forecast-carousel
       :days="days"
     />
@@ -31,23 +36,30 @@
 import axios from 'axios';
 import MyHeader from '@/components/MyHeader';
 import NavBreadcrumbs from '@/components/NavBreadcrumbs';
-import CardsList from '@/components/CardsList';
 import DayForecastCarousel from '@/components/DayForecastCarousel';
 import SunCard from '@/components/SunCard';
 import DayForecast from '@/components/DayForecast';
+import CurrentCard from '@/components/CurrentCard'
+import MapCard from '@/components/MapCard'
+import TodayFacts from '@/components/TodayFacts'
+import TomorrowFacts from '@/components/TomorrowFacts'
 
 export default {
   components: {
     MyHeader,
     NavBreadcrumbs,
-    CardsList,
     DayForecastCarousel,
     SunCard,
     DayForecast,
+    CurrentCard,
+    MapCard,
+		TodayFacts,
+		TomorrowFacts,
   },
 
   data() {
     return {
+      API_KEY: 'e7048f0fbd8c4cb8853125913221403',
       card: {
         current: {
           condition: {
@@ -127,7 +139,7 @@ export default {
         console.log(e)
       }
     },
-
+    
   },
 
 }
@@ -145,6 +157,11 @@ export default {
     justify-content: center
     width: 100%
     background: $main
+
+.card-wrapper
+  display: flex
+  justify-content: space-between
+  flex-wrap: wrap
 
 .some-cards
   display: flex

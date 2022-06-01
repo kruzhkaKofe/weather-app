@@ -8,23 +8,29 @@
 			>
 				<input 
 					:checked="checkedMonth(month)"
-					:disabled="disabledMonth(month)"
 					class="calendar-month__item-radio" 
 					type="radio" 
 					name="months" 
-					:id="i" 
+					:id="i"
+					:value="month" 
 				>
 				<label class="calendar-month__item-label" :for="i">{{ month }}</label>
 			</div>
 		</div>
 		<div class="calendar-days">
-			<div class="calendar-days">
-
+			<div 
+				v-for="n in 31"
+				:key="n.index"
+				class="calendar-days__day-wrapper"
+			>	
+				<div class="calendar-days__day-item">
+					{{ n }}
+				</div>
 			</div>
 		</div>
-		<button @click="test">test</button>
-		<p>{{ card.location.name }}</p>
+		<!-- <button @click="test">test</button> -->
 	</div>
+
 </template>
 
 <script>
@@ -46,23 +52,12 @@
 
 		methods: {
 			checkedMonth(month) {
-				const months = ['Янв.', 'Фефр.', 'Март', 'Апр.', 'Май', 'Июнь', 'Июль', 'Авг.', 'Сент.', 'Окт.', 'Нояб.', 'Дек.']
-				const numOfMonth =  new Date(this.card.location.localtime).getMonth()
-				if (months[numOfMonth] === month) {
+				const numOfMonth = new Date(this.card.location.localtime).getMonth()
+				if (this.monthName[numOfMonth] === month) {
 					return true
 				}
     	},
-
-			disabledMonth(month) {
-				const months = ['Янв.', 'Фефр.', 'Март', 'Апр.', 'Май', 'Июнь', 'Июль', 'Авг.', 'Сент.', 'Окт.', 'Нояб.', 'Дек.']
-				const numOfMonth =  new Date(this.card.location.localtime).getMonth()
-				for (let i = 0; i < months; i++) {
-					if (numOfMonth > i) {
-						return true
-					} 					 
-				}
-			},
-
+			
 		},
 
 		computed: {
@@ -76,7 +71,8 @@
 @import "@/styles/variables.sass"
 
 .calendar
-	height: 600px
+	width: 700px
+	height: 450px
 	padding: 20px
 	font-size: $small
 	border-radius: $default
@@ -90,7 +86,8 @@
 		display: inline-block
 		overflow: hidden
 		border-radius: 6px
-		font-size: $small
+		font-size: $x-small
+		margin-bottom: 30px
 
 		&__item
 			display: inline-block
@@ -101,7 +98,7 @@
 				
 			&:last-child label
 				border-radius: 0 6px 6px 0
-				border-right: 1px solid rgba(0, 0, 0, 0.2)
+				border-right: 1px solid rgba(0, 0, 0)
 				
 			&-radio
 				display: none
@@ -112,13 +109,39 @@
 			&-label
 				display: inline-block
 				cursor: pointer
-				padding: 0px 15px
+				padding: 0px 9px
 				line-height: 40px
-				border: 1px solid #999
+				border: 1px solid #000
 				border-right: none
 				user-select: none
 
+	&-days
+		width: 100%
+		display: flex
+		align-items: center
+		flex-wrap: wrap
 
+		&__day
+
+			&-wrapper
+				display: flex
+				align-items: center
+				justify-content: center
+				width: calc(100%/7)
+				height: 65px
+			
+			&-item
+				display: flex
+				align-items: center
+				justify-content: center
+				height: 60px
+				width: 60px
+				border: 1px solid black
+				border-radius: 50%
+
+				&:hover
+					cursor: pointer
+					background-color: hsl(153, 0%, 87%)
 
 
 </style>

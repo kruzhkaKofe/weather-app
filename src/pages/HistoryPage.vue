@@ -8,9 +8,14 @@
 		<nav-breadcrumbs 
 			:card="card"
 		/>
-		<my-calendar
-      :card="card"
-    />
+    <div class="card-wrapper">
+      <my-calendar
+        :card="card"
+      />
+      <map-card
+        :card="card"
+      />
+    </div>
 	</div>
 </template>
 
@@ -20,6 +25,7 @@ import MyHeader from '@/components/MyHeader';
 import NavBreadcrumbs from '@/components/NavBreadcrumbs';
 import CurrentCard from '@/components/CurrentCard'
 import MyCalendar from '@/components/MyCalendar'
+import MapCard from '@/components/MapCard'
 
 	export default {
 		components: {
@@ -27,6 +33,7 @@ import MyCalendar from '@/components/MyCalendar'
 		NavBreadcrumbs,
 		CurrentCard,
 		MyCalendar,
+    MapCard,
   },
 
 	data() {
@@ -121,7 +128,7 @@ import MyCalendar from '@/components/MyCalendar'
 
 .card-wrapper
   display: flex
-  align-items: center
   justify-content: space-between
+  flex-wrap: wrap
 
 </style>

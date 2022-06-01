@@ -64,6 +64,7 @@
 				this.$emit('findWeatherInCity', this.card);
 				this.card.location.name = '';
 			},
+
 		},
 		
 		mounted() {

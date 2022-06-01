@@ -26,6 +26,7 @@ import SearchForm from '@/components/SearchForm'
 
 		data() {
 			return {
+				name: '',
 				card: {
         	current: {
           condition: {
