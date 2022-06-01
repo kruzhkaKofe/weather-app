@@ -12,8 +12,9 @@
       <my-calendar
         :card="card"
       />
-      <map-card
+      <current-card
         :card="card"
+        :hours="hours"
       />
     </div>
 	</div>

@@ -5,29 +5,39 @@
 				class="calendar-month__item"
 				v-for="(month, i) in monthName"
 				:key="i"
-			>
-				<input 
-					:checked="checkedMonth(month)"
+			>	
+				<input
 					class="calendar-month__item-radio" 
 					type="radio" 
-					name="months" 
 					:id="i"
+					name="months" 
+					:checked="checkedMonth(month)"
 					:value="month" 
+					v-model="choisedMonth"
 				>
 				<label class="calendar-month__item-label" :for="i">{{ month }}</label>
 			</div>
 		</div>
 		<div class="calendar-days">
-			<div 
-				v-for="n in 31"
-				:key="n.index"
+			<div
+				v-for="(n, i) in quantityDays"
+				:key="i"
 				class="calendar-days__day-wrapper"
 			>	
-				<div class="calendar-days__day-item">
+				<div 
+					class="calendar-days__day-item"
+					:class="{
+						'today': choisedDay,
+						'previous': 0 != 0,
+					}"
+					@click="takeDay(n)"
+				>
 					{{ n }}
 				</div>
 			</div>
 		</div>
+
+		
 		<!-- <button @click="test">test</button> -->
 	</div>
 
@@ -45,8 +55,8 @@
 		data() {
 			return {
 				monthName: ['Янв.', 'Фефр.', 'Март', 'Апр.', 'Май', 'Июнь', 'Июль', 'Авг.', 'Сент.', 'Окт.', 'Нояб.', 'Дек.'],
-				isChecked: false,
-				isDisabled: true,
+				choisedMonth: '',
+				choisedDay: null,
 			}
 		},
 
@@ -57,49 +67,74 @@
 					return true
 				}
     	},
-			
+
+			takeDay(n) {
+				this.choisedDay === new Date(this.card.location.localtime).getDate() ? this.choisedDay : this.choisedDay === n
+				// this.choisedDay = n
+			},
+
 		},
 
 		computed: {
-			
-		}
+			quantityDays() {
+				if (this.choisedMonth === 'Февр.' && (new Date(this.card.location.localtime).getYear()) % 4 === 0) {
+					return 29;
+				} else {
+					switch(this.choisedMonth) {
+						case 'Апр.':
+						case 'Июнь':
+						case 'Сент.':
+						case 'Нояб.':
+							return 30;
+						case 'Фефр.':
+							return 28;
+						default: 
+							return 31;
+					}
+				}
+			},
 
+		},
+
+		
 	}
 </script>
 
 <style lang="sass" scoped>
 @import "@/styles/variables.sass"
 
+.today
+	background-color: #fff
+
+.previous 
+	background-color: hsl(0, 0%, 85%)
+
 .calendar
 	width: 700px
 	height: 450px
 	padding: 20px
-	font-size: $small
 	border-radius: $default
-	background: $main
-	display: flex
-	flex-direction: column
-	// justify-content: center
-	align-items: center
+	background-color: $main
+	display: inline-block
+	overflow: hidden
+	font-size: $x-small
 
-	&-month
-		display: inline-block
-		overflow: hidden
-		border-radius: 6px
-		font-size: $x-small
-		margin-bottom: 30px
+	&-month 
+		display: flex
+		justify-content: center
 
 		&__item
 			display: inline-block
 			float: left
+			margin-bottom: 40px
 
 			&:first-child label
 				border-radius: 6px 0 0 6px
-				
+
 			&:last-child label
 				border-radius: 0 6px 6px 0
 				border-right: 1px solid rgba(0, 0, 0)
-				
+
 			&-radio
 				display: none
 
@@ -138,10 +173,11 @@
 				width: 60px
 				border: 1px solid black
 				border-radius: 50%
+				font-size: $small
+				font-weight: 700
 
 				&:hover
 					cursor: pointer
-					background-color: hsl(153, 0%, 87%)
-
+					background-color: #fff
 
 </style>

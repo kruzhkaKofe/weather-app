@@ -11,7 +11,8 @@
 			<swiper-slide
 				class="day-carousel-slide" 
 				v-for="(day, i) in days" 
-				:key="i" 
+				:key="i"
+				@click="$router.push(`/#${dateOfDay(day)}`)" 
 			>
 				<div class="day-carousel-slide__date">
 					<p class="day-carousel-slide__date-num">{{ dateOfDay(day) }}</p> 
