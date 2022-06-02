@@ -59,7 +59,6 @@ export default {
 
   data() {
     return {
-      API_KEY: 'e7048f0fbd8c4cb8853125913221403',
       card: {
         current: {
           condition: {
@@ -124,7 +123,7 @@ export default {
             days: '3',
           }
         })
-        console.log(res)
+        // console.log(res)
         this.card = res.data
         this.days = this.card.forecast.forecastday
         for (let i = 0; i < this.days.length; i++) {
@@ -134,7 +133,6 @@ export default {
           }
 				}
         this.hours = this.card.forecast.forecastday[0].hour
-        console.log(this.days)
       } catch(e) {
         console.log(e)
       }

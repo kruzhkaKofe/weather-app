@@ -91,7 +91,6 @@ import MapCard from '@/components/MapCard'
     async fetchWeather(card) {
       this.card = card
       this.hours = []
-      this.days = []
       try {
         const res = await axios({
           methods: 'GET',
@@ -100,24 +99,44 @@ import MapCard from '@/components/MapCard'
             key: 'e7048f0fbd8c4cb8853125913221403',
             q: this.card.location.name,
             lang: 'ru',
-            days: '3',
+
           }
         })
         console.log(res)
         this.card = res.data
-        this.days = this.card.forecast.forecastday
-        for (let i = 0; i < this.days.length; i++) {
-          for (let j = 0; j < this.days[i].hour.length; j++) {
-            this.days[i].hour[j].time = this.days[i].hour[j].time.split('').slice(11).join('')
-            this.days[i].hour[j].temp_c = Math.round(this.days[i].hour[j].temp_c)
-          }
-				}
         this.hours = this.card.forecast.forecastday[0].hour
-        console.log(this.days)
+        for (let i = 0; i < this.hours.length; i++) {
+          this.hours[i].time = this.hours[i].time.split('').slice(11).join('')
+          this.hours[i].temp_c = Math.round(this.hours[i].temp_c)
+				}
       } catch(e) {
         console.log(e)
       }
     },
+    
+    async fetchHistory(n) {
+      this.card = n
+      this.hours = []
+      try {
+        const res  = await axios ({
+          methods: 'GET',
+          url: 'http://api.weatherapi.com/v1/history.json',
+          params: {
+            key: 'e7048f0fbd8c4cb8853125913221403',
+            q: this.card.location.name,
+            lang: 'ru',
+            dt: '',
+          }
+        })
+        console.log(res)
+        this.card = res.data
+      } catch(e) {
+        console.log(e)
+      
+      }
+		},
+
+
 
   },
 

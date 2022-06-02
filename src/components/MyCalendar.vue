@@ -18,25 +18,28 @@
 				<label class="calendar-month__item-label" :for="i">{{ month }}</label>
 			</div>
 		</div>
-		<div class="calendar-days">
-			<div
-				v-for="(n, i) in quantityDays"
-				:key="i"
-				class="calendar-days__day-wrapper"
-			>	
-				<div 
-					class="calendar-days__day-item"
-					:class="{
-						'today': choisedDay,
-						'previous': 0 != 0,
-					}"
-					@click="takeDay(n)"
-				>
-					{{ n }}
-				</div>
+			<div class="calendar-days">
+				<div
+					v-for="(n, i) in quantityDays"
+					:key="i"
+					class="calendar-days__day-wrapper"
+				>	
+
+					<div 
+						class="calendar-days__day-item"
+						:class="{
+							'previous-month': isPreviousMonth(),
+							'previous': isPreviousDays(n),
+							'today': n === new Date().getDate() && choisedMonth === monthName[new Date().getMonth()],
+							'choised': choisedDay === n,
+						}"
+						@click="this.choisedDay = n, findHistory(n)"
+					>
+						{{ n }}
+					</div>
+
 			</div>
 		</div>
-
 		
 		<!-- <button @click="test">test</button> -->
 	</div>
@@ -54,30 +57,67 @@
 
 		data() {
 			return {
+				date: '',
 				monthName: ['Янв.', 'Фефр.', 'Март', 'Апр.', 'Май', 'Июнь', 'Июль', 'Авг.', 'Сент.', 'Окт.', 'Нояб.', 'Дек.'],
-				choisedMonth: '',
+				choisedMonth: null,
 				choisedDay: null,
 			}
 		},
 
 		methods: {
+			currentMonth() {
+				const numOfMonth = new Date().getMonth()
+				this.monthName = this.monthName.filter(m => this.monthName.indexOf(m) <= numOfMonth)
+				this.choisedMonth = this.monthName[numOfMonth]
+			},
+
 			checkedMonth(month) {
-				const numOfMonth = new Date(this.card.location.localtime).getMonth()
+				const numOfMonth = new Date().getMonth()
 				if (this.monthName[numOfMonth] === month) {
 					return true
 				}
     	},
 
-			takeDay(n) {
-				this.choisedDay === new Date(this.card.location.localtime).getDate() ? this.choisedDay : this.choisedDay === n
-				// this.choisedDay = n
+			isPreviousMonth(n) {
+				const numOfMonth = new Date().getMonth()
+				if (numOfMonth > this.monthName.indexOf(this.choisedMonth)){
+					return true
+				}
 			},
 
+			isPreviousDays(n) {
+				const numOfMonth = new Date().getMonth()
+				if (this.choisedMonth === this.monthName[numOfMonth] && n < new Date().getDate()) {
+					return true
+				}
+			},
+
+			findHistory(n) {
+				const d = new Date()
+
+				if (n <= d.getDate() && d.getMonth() === this.monthName.indexOf(this.choisedMonth)) {
+
+					const year = d.getFullYear()
+
+					const month = (this.monthName.indexOf(this.choisedMonth) + 1).toString().padStart(2, '0')
+					
+					const day = n.toString().padStart(2, '0')
+
+					console.log(`${year}-${month}-${day}`)
+				}
+			}
+
+
+
+		},
+		
+		mounted() {
+			this.currentMonth()
 		},
 
 		computed: {
 			quantityDays() {
-				if (this.choisedMonth === 'Февр.' && (new Date(this.card.location.localtime).getYear()) % 4 === 0) {
+				if (this.choisedMonth === 'Февр.' && (new Date().getYear()) % 4 === 0) {
 					return 29;
 				} else {
 					switch(this.choisedMonth) {
@@ -93,22 +133,24 @@
 					}
 				}
 			},
-
+			
 		},
 
-		
 	}
 </script>
 
 <style lang="sass" scoped>
 @import "@/styles/variables.sass"
 
+.previous, .previous-month
+	background-color: hsl(0, 0%, 85%)
+
 .today
 	background-color: #fff
 
-.previous 
-	background-color: hsl(0, 0%, 85%)
-
+.choised
+	background-color: pink
+	
 .calendar
 	width: 700px
 	height: 450px
@@ -178,6 +220,7 @@
 
 				&:hover
 					cursor: pointer
-					background-color: #fff
+					transition: 0.4s
+					background-color: pink
 
 </style>
