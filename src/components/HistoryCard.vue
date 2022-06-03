@@ -2,24 +2,21 @@
 	<div class="card">
     <div class="card__location">
       <h1 class="card__location-name main-text">{{ card.location.name }}</h1>
-      <time :datetime="card.location.localtime" class="card__location-time secondary-text">Now is {{ localtimeWithoutData }}</time>
+      <time :datetime="card.forecast.forecastday[0].date" class="card__location-time secondary-text">Дата: {{ dateSelected }}</time>
     </div>
     <div class="card__current">
-      <p class="card__current-temp main-text">
-        {{ currentTemp }}
+      <p class="card__current-temp main-text"> 
+				макс.: {{ maxTemp }}, мин.: {{ minTemp }}
       </p>
-      <img class="card__current-img" :src="card.current.condition.icon" alt="crrnt-img">
+      <img class="card__current-img" :src="card.forecast.forecastday[0].condition.icon" alt="crrnt-img">
       <div class="card__condition">
-        <p>{{ card.current.condition.text }}</p>
-        <p class="card__condition-feelslike secondary-text">
-          Ощущается как {{ feelsLikeTemp }}
-        </p>
+        <p>{{ card.forecast.forecastday[0].condition.text }}</p>
       </div>
     </div>
     <div class="card__facts">
       <div class="card__facts-item">
         <img class="card__facts-image" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22 viewBox=%220 0 24 24%22%3E %3Cg fill=%22%23FFF%22 fill-rule=%22nonzero%22%3E %3Cpath d=%22M6 11.5h5.688a3.75 3.75 0 1 0-1.95-6.954.75.75 0 0 0 .781 1.28A2.25 2.25 0 1 1 11.688 10L6 10.001a.75.75 0 1 0 0 1.5zM2 15h9.966a1.5 1.5 0 1 1-.779 2.782.75.75 0 0 0-.78 1.281 3 3 0 1 0 1.56-5.563H1.999A.75.75 0 1 0 2 15zM16.667 13h2.251a3 3 0 1 0-1.56-5.563.75.75 0 0 0 .781 1.28 1.5 1.5 0 1 1 .779 2.782l-2.251.001a.75.75 0 1 0 0 1.5z%22/%3E %3C/g%3E %3C/svg%3E" alt="wind">
-        <p class="card__facts-wind">{{ windSpeed }} м/с, {{ windDirection }} 
+        <p class="card__facts-wind"> до {{ windSpeed }} м/с, {{ windDirection }} 
           <img 
             :style="windDirectionIcon"
             class="card__facts-wind-direction-icon" 
@@ -70,28 +67,29 @@ import HourForecastCarousel from '@/components/HourForecastCarousel';
     },
 
     computed: {
-      windSpeed() {
-        return (this.card.current.wind_kph * 1000 / 3600).toFixed(1)
+			dateSelected(){
+				const year = new Date(this.card.location.localtime).getFullYear()
+				const month = (new Date(this.card.location.localtime).getMonth() + 1).toString().padStart(2, '0')
+				const date = (new Date(this.card.location.localtime).getDate()).toString().padStart(2, '0')
+				return `${date}.${month}.${year}`
+			},
+
+			maxTemp(){ 
+				const max = Math.round(this.card.forecast.forecastday[0].maxtemp_c)
+				return max > 0 ? `+${max}` : `${max}`
+			},
+
+			minTemp(){ 
+				const min = Math.round(this.card.forecast.forecastday[0].mintemp_c)
+				return min > 0 ? `+${min}` : `${min}`
+			},
+
+      maxWindSpeed() {
+        return (this.card.forecast.forecastday[0].maxwind_kph * 1000 / 3600).toFixed(1)
       },
 
       pressureMercury(){
         return Math.round(this.card.current.pressure_mb * 0.75006156)
-      },
-
-      localtimeWithoutData(){
-        const minutes = (new Date(this.card.location.localtime).getMinutes()).toString().padStart(2, '0')
-        const hours = (new Date(this.card.location.localtime).getHours()).toString().padStart(2, '0')
-        return`${hours}:${minutes}`
-      },
-
-      feelsLikeTemp(){
-        const feels = Math.round(this.card.current.feelslike_c)
-        return feels > 0 ? `+${feels}` : `${feels}`
-      },
-
-      currentTemp(){ 
-        const temp = Math.round(this.card.current.temp_c)
-				return temp > 0 ? `+${temp}` : `${temp}`
       },
 
       windDirection() {
@@ -158,67 +156,67 @@ import HourForecastCarousel from '@/components/HourForecastCarousel';
 @import "@/styles/variables.sass"
 
 .main-text
-  font-size: $medium
-  font-weight: bold
+	font-size: $medium
+	font-weight: bold
 
 .card
-  width: 700px
-  height: 450px
-  padding: 30px
-  font-size: $small
-  border-radius: $default
-  background-color: $main
+	width: 700px
+	height: 450px
+	padding: 30px
+	font-size: $small
+	border-radius: $default
+	background-color: $main
 
-  &__location
+	&__location
 
-  &__current
-    display: flex
-    align-items: center
-    margin-bottom: 25px
+	&__current
+		display: flex
+		align-items: center
+		margin-bottom: 25px
 
-    &-temp
-      font-size: $large
+		&-temp
+			font-size: $large
 
-      &::after
-        content: '\00B0'
+			&::after
+				content: '\00B0'
 
-    &-img
-      @include condition-icon
-      margin-left: 15px
-      margin-right: 15px
+		&-img
+			@include condition-icon
+			margin-left: 15px
+			margin-right: 15px
 
-  &__condition
+	&__condition
 
-    &-feelslike::after
-      content: '\00B0'
+		&-feelslike::after
+			content: '\00B0'
 
-  &__facts
-    display: flex
-    justify-content: space-between
-    width: 400px
-    margin-bottom: 30px
+	&__facts
+		display: flex
+		justify-content: space-between
+		width: 400px
+		margin-bottom: 30px
 
-    &-item 
-      display: flex
-      justify-content: center
-      align-items: center
+		&-item 
+			display: flex
+			justify-content: center
+			align-items: center
 
-    &-image 
-      @include facts-icon
-      margin-right: 5px
+		&-image 
+			@include facts-icon
+			margin-right: 5px
 
-    &-wind
-      display: flex
-      align-items: center
+		&-wind
+			display: flex
+			align-items: center
 
-      &-direction-icon
-        @include wind-dir-icon
-        margin-left: 5px
-      
-  &__line
-    width: 100%
-    height: 2px
-    background-color: rgba(0, 0, 0, 0.2)
-    margin-bottom: 20px
+			&-direction-icon
+				@include wind-dir-icon
+				margin-left: 5px
+			
+	&__line
+		width: 100%
+		height: 2px
+		background-color: rgba(0, 0, 0, 0.2)
+		margin-bottom: 20px
 
 </style>

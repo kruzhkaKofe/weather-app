@@ -123,7 +123,7 @@ export default {
             days: '3',
           }
         })
-        // console.log(res)
+        
         this.card = res.data
         this.days = this.card.forecast.forecastday
         for (let i = 0; i < this.days.length; i++) {
@@ -131,8 +131,9 @@ export default {
             this.days[i].hour[j].time = this.days[i].hour[j].time.split('').slice(11).join('')
             this.days[i].hour[j].temp_c = Math.round(this.days[i].hour[j].temp_c)
           }
-				}
+        }
         this.hours = this.card.forecast.forecastday[0].hour
+        console.log(this.card)
       } catch(e) {
         console.log(e)
       }

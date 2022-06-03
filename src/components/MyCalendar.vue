@@ -18,31 +18,30 @@
 				<label class="calendar-month__item-label" :for="i">{{ month }}</label>
 			</div>
 		</div>
-			<div class="calendar-days">
-				<div
-					v-for="(n, i) in quantityDays"
-					:key="i"
-					class="calendar-days__day-wrapper"
-				>	
-
-					<div 
-						class="calendar-days__day-item"
-						:class="{
-							'previous-month': isPreviousMonth(),
-							'previous': isPreviousDays(n),
-							'today': n === new Date().getDate() && choisedMonth === monthName[new Date().getMonth()],
-							'choised': choisedDay === n,
-						}"
-						@click="this.choisedDay = n, findHistory(n)"
-					>
-						{{ n }}
-					</div>
+		<div class="calendar-days">
+			<div
+				v-for="(n, i) in quantityDays"
+				:key="i"
+				class="calendar-days__day-wrapper"
+			>	
+				<time 
+					class="calendar-days__day-item"
+					:class="{
+						'previous-month': isPreviousMonth(),
+						'previous': isPreviousDays(n),
+						'today': n === new Date().getDate() && choisedMonth === monthName[new Date().getMonth()],
+						'choised': choisedDay === n,
+					}"
+					:datetime="dateTime(n)"
+					@click="takeDay(n), findHistory()"
+				>
+					{{ n }}
+				</time>
 
 			</div>
 		</div>
-		
-		<!-- <button @click="test">test</button> -->
 	</div>
+	<!-- <button @click="test">test</button> -->
 
 </template>
 
@@ -58,6 +57,7 @@
 		data() {
 			return {
 				date: '',
+				dateValue: '',
 				monthName: ['Янв.', 'Фефр.', 'Март', 'Апр.', 'Май', 'Июнь', 'Июль', 'Авг.', 'Сент.', 'Окт.', 'Нояб.', 'Дек.'],
 				choisedMonth: null,
 				choisedDay: null,
@@ -92,18 +92,25 @@
 				}
 			},
 
-			findHistory(n) {
+			dateTime(n) {
 				const d = new Date()
+				const year = d.getFullYear()
+				const month = (this.monthName.indexOf(this.choisedMonth) + 1).toString().padStart(2, '0')
+				const day = n.toString().padStart(2, '0')
+				return `${year}-${month}-${day}`
+			},
 
-				if (n <= d.getDate() && d.getMonth() === this.monthName.indexOf(this.choisedMonth)) {
+			takeDay(n) {
+				this.choisedDay = n
+				this.dateValue = this.dateTime(n)
+				console.log(this.dateValue)
+			}, 
 
-					const year = d.getFullYear()
-
-					const month = (this.monthName.indexOf(this.choisedMonth) + 1).toString().padStart(2, '0')
-					
-					const day = n.toString().padStart(2, '0')
-
-					console.log(`${year}-${month}-${day}`)
+			findHistory() {
+				const d = new Date()
+				if (new Date(this.dateValue).getTime() <= d) {
+					this.$emit('fetchHistoryOfWeather', this.dateValue)
+					this.dateValue = ''
 				}
 			}
 
@@ -142,7 +149,8 @@
 <style lang="sass" scoped>
 @import "@/styles/variables.sass"
 
-.previous, .previous-month
+.previous-month,
+.previous
 	background-color: hsl(0, 0%, 85%)
 
 .today
