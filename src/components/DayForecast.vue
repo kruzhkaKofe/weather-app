@@ -163,7 +163,7 @@
 
 			weekendCheck(day) {
 				if (this.week[this.numOfDay(day)] === this.week[0] || this.week[this.numOfDay(day)] === this.week[6]) {
-					return 'color: hsl(0, 77%, 63%)'
+					return 'color: red'
 				}
 			},
 			

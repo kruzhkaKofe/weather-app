@@ -4,14 +4,14 @@
 			<my-header @findWeatherInCity="fetchWeather"/>
 		</div>
 	</div>
-  <div class="inner-wrapper">
+  <div 
+    v-if="card.forecast"
+    class="inner-wrapper"
+  >
     <nav-breadcrumbs :card="card"/>
     <div class="card-wrapper">
-      <today-facts :card="card"/>
-		  <tomorrow-facts :card="card"/>
-      <!-- <facts-card 
-        :days="days"
-      /> -->
+      <facts-card>Сегодня: {{ minTempToday }}...{{ maxTempToday }}°; ветер {{ todayWindSpeed }} м/с;</facts-card>
+      <facts-card>Завтра: {{ minTempTomorrow }}...{{ maxTempTomorrow }}°; ветер {{ tomorrowWindSpeed }} м/с;</facts-card>
 		  <current-card 
 			  :card="card"
 			  :hours="hours"
@@ -44,8 +44,6 @@ import SunCard from '@/components/SunCard';
 import DayForecast from '@/components/DayForecast';
 import CurrentCard from '@/components/CurrentCard'
 import MapCard from '@/components/MapCard'
-import TodayFacts from '@/components/TodayFacts'
-import TomorrowFacts from '@/components/TomorrowFacts'
 import FactsCard from '@/components/FactsCard'
 
 export default {
@@ -57,9 +55,7 @@ export default {
     DayForecast,
     CurrentCard,
     MapCard,
-		TodayFacts,
-		TomorrowFacts,
-    FactsCard
+    FactsCard,
   },
 
   data() {
@@ -103,8 +99,46 @@ export default {
     
   },
 
-  mounted() {
-    this.fetchWeather('Izhevsk')
+  computed: {
+    minTempToday() {
+      const minT = Math.round(this.card.forecast.forecastday[0].day.mintemp_c)
+      return minT > 0 ? `+${minT}` : `${minT}`
+    }, 
+
+    maxTempToday() {
+      const maxT = Math.round(this.card.forecast.forecastday[0].day.maxtemp_c)
+      return maxT > 0 ? `+${maxT}` : `${maxT}`
+    },
+
+    todayWindSpeed() {
+      let myArr = []
+      const windArr  = this.card.forecast.forecastday[0].hour
+      for (let i = 0; i < windArr.length; i++) {
+        myArr.push(Math.floor(windArr[i].wind_kph))
+      }
+      myArr.sort((a, b) => a - b).splice(1, 22)
+      return `${myArr[0]} - ${myArr[1]}`
+    },
+
+    minTempTomorrow() {
+				const minT = Math.round(this.card.forecast.forecastday[1].day.mintemp_c)
+				return minT > 0 ? `+${minT}` : `${minT}`
+			}, 
+
+    maxTempTomorrow() {
+      const maxT = Math.round(this.card.forecast.forecastday[1].day.maxtemp_c)
+      return maxT > 0 ? `+${maxT}` : `${maxT}`
+    },
+
+    tomorrowWindSpeed() {
+      let myArr = []
+      const windArr  = this.card.forecast.forecastday[1].hour
+      for (let i = 0; i < windArr.length; i++) {
+        myArr.push(Math.floor(windArr[i].wind_kph))
+      }
+      myArr.sort((a, b) => a - b).splice(1, 22)
+      return `${myArr[0]} - ${myArr[1]}`
+    },
   }
 
 }

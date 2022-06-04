@@ -9,7 +9,7 @@
     </div>
     <div class="card__history">
       <p class="card__history-temp main-text"> 
-				макс.: {{ maxTemp }}° <br> мин.: {{ minTemp }}°
+				от {{ minTemp }}° до {{ maxTemp }}°
       </p>
       <img class="card__history-img" :src="card.forecast.forecastday[0].day.condition.icon" alt="condition">
       <div class="card__condition">

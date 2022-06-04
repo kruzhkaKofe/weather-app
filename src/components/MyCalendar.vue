@@ -86,16 +86,37 @@
 					this.$emit('fetchHistoryOfWeather', this.dateValue)
 					console.log(this.dateValue)
 				}
-				
 			},
+
+			chooseMonth() {
+				this.choisedMonth = this.monthName[this.numOfMonth];
+			}
 
 		},
 
 		mounted() {
-			this.choisedMonth = this.monthName[this.numOfMonth];
+			this.chooseMonth()
 		},
 
 		computed: {
+			currentDate() {
+				return new Date()
+			},
+
+			numOfMonth() {
+				return this.currentDate.getMonth()
+			},
+
+			currentMonth() {
+				return this.monthName.filter(m => this.monthName.indexOf(m) <= this.numOfMonth)
+			},
+
+			checkedMonth() {
+				if (this.monthName[this.numOfMonth]) {
+					return true
+				}
+			},
+
 			quantityDays() {
 				if (this.choisedMonth === 'Февр.' && (this.currentDate.getFullYear()) % 4 === 0) {
 					return 29;
@@ -114,24 +135,6 @@
 				}
 			},
 
-			currentDate() {
-				return new Date()
-			},
-
-			numOfMonth() {
-				return this.currentDate.getMonth()
-			},
-
-			currentMonth() {
-				return this.monthName.filter(m => this.monthName.indexOf(m) <= this.numOfMonth)
-			},
-
-			checkedMonth() {
-				if (this.monthName[this.numOfMonth]) {
-					return true
-				}
-    	},
-			
 		},
 
 	}
