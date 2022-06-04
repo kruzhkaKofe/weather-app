@@ -27,51 +27,13 @@ import SearchForm from '@/components/SearchForm'
 		data() {
 			return {
 				name: '',
-				card: {
-        	current: {
-          condition: {
-          }
-        },
-        location: {
-          name: '',
-					localtime: '',
-					lon: '',
-          lat: '',
-        },
-        forecast: {
-          forecastday: [
-						{
-							astro: {
-								sunrise: '',
-								sunset: '',
-							},
-							day: {
-                mintemp_c: '',
-                maxtemp_c: '',
-              },
-              hour: {
-								wind_kph: '',
-              }
-						},
-						{
-              day: {
-                mintemp_c: '',
-                maxtemp_c: '',
-              },
-              hour: {
-                wind_kph: ''
-              }
-            }
-					],
-        }
-      }
 			}
 		},
 
 		methods: {
-			findWeather(card) {
-				this.card = card
-				this.$emit('findWeatherInCity', this.card)
+			findWeather(name) {
+				this.name = name
+				this.$emit('findWeatherInCity', this.name)
 			}
 		}
 		

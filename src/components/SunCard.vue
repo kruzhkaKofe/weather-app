@@ -1,6 +1,8 @@
 <template>
-	<div class="sun-card">
-		
+	<div 
+		v-if="card.location"
+		class="sun-card"
+	>
 		<div class="sun-card__planet">
 			<div class="sun-card__sun-circle"></div>
 			<div class="sun-card__earth">
@@ -40,12 +42,10 @@
 		</div>
 	</div>
 
-	<!-- <button @click="test">test</button> -->
 </template>
 
 <script>
 	export default {
-		
 		props: {
 			card: {
 				type: Object,
@@ -53,21 +53,23 @@
 			}
 		},
 
-		methods: {
-			test() {
-			
-			}
-		},
-
 		computed: {
+			sunrise() {
+				return this.card.forecast.forecastday[0].astro.sunrise
+			},
+
+			sunset() {
+				return this.card.forecast.forecastday[0].astro.sunset
+			},
+
 			sunriseCut() {
-				return this.card.forecast.forecastday[0].astro.sunrise.split('').slice(0, 5).join('')
+				return this.sunrise.split('').slice(0, 5).join('')
 			},
 
 			sunsetCut() {
-				let fullTime = this.card.forecast.forecastday[0].astro.sunset.split('')
-				let timeHours = this.card.forecast.forecastday[0].astro.sunset.split('').slice(0, 2).join('')
-				if (this.card.forecast.forecastday[0].astro.sunset.split('').slice(-2, -1).join('') === 'P') {
+				let fullTime = this.sunset.split('')
+				let timeHours = this.sunset.split('').slice(0, 2).join('')
+				if (this.sunset.split('').slice(-2, -1).join('') === 'P') {
 					timeHours = +timeHours + 12
 					fullTime.splice(0, 2, timeHours)
 				}
@@ -75,16 +77,16 @@
 			},
 
 			daylongHours() {
-				const sunriseHours = this.card.forecast.forecastday[0].astro.sunrise.split('').slice(0, 2).join('')
-				const sunsetHours = this.card.forecast.forecastday[0].astro.sunset.split('').slice(0, 2).join('')
-				const riseMin = this.card.forecast.forecastday[0].astro.sunrise.split('').slice(3, 5).join('')
-				const setMin = this.card.forecast.forecastday[0].astro.sunset.split('').slice(3, 5).join('')
+				const sunriseHours = this.sunrise.split('').slice(0, 2).join('')
+				const sunsetHours = this.sunset.split('').slice(0, 2).join('')
+				const riseMin = this.sunrise.split('').slice(3, 5).join('')
+				const setMin = this.sunset.split('').slice(3, 5).join('')
 				return +setMin >= +riseMin ? ((+sunsetHours + 12) - +sunriseHours).toString() : ((+sunsetHours + 11) - +sunriseHours).toString()
 			},
 
 			daylongMinutes() {
-				const sunriseMinutes = this.card.forecast.forecastday[0].astro.sunrise.split('').slice(3, 5).join('')
-				const sunsetMinutes = this.card.forecast.forecastday[0].astro.sunset.split('').slice(3, 5).join('')
+				const sunriseMinutes = this.sunrise.split('').slice(3, 5).join('')
+				const sunsetMinutes = this.sunset.split('').slice(3, 5).join('')
 				let daylongM = 0
 				if (sunriseMinutes > sunsetMinutes) {
 					daylongM = 60 + (+sunsetMinutes - +sunriseMinutes)

@@ -1,7 +1,7 @@
 <template>
 	<form @submit.prevent>
 		<input
-			v-model="card.location.name"
+			v-model="name"
 			type="text" 
 			placeholder="Название города (eng)...">
 		<button @click="findWeather">Найти</button>
@@ -13,62 +13,19 @@
 
 		data() {
 			return {
-				card: {
-        	current: {
-          	condition: {
-          	}
-        	},
-        	location: {
-          	name: 'Izhevsk',
-						localtime: '',
-						lon: '',
-          	lat: '',
-        	},
-        	forecast: {
-          	forecastday: [
-							{
-								astro: {
-									sunrise: '',
-									sunset: '',
-								},
-
-								day: {
-                	mintemp_c: '',
-                	maxtemp_c: '',
-              	},
-              	hour: {
-									wind_kph: '',
-									condition: {
-										text: '',
-										icon: '',
-                	}
-              	}
-							},
-							{
-								day: {
-									mintemp_c: '',
-									maxtemp_c: '',
-								},
-								hour: {
-									wind_kph: ''
-              }
-            }
-						],
-        	}
-      	},
+				name: 'Izhevsk',
     	}
   	},
 		
 		methods: {
 			findWeather() {
-				this.$emit('findWeatherInCity', this.card);
-				this.card.location.name = '';
+				this.$emit('findWeatherInCity', this.name);
+				this.name = '';
 			},
-
 		},
 		
 		mounted() {
-			this.findWeather(this.card)
+			this.findWeather(this.name)
 		}
 
 	}

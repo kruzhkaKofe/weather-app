@@ -62,12 +62,6 @@
 			}
     },
 
-		methods: {
-		},
-
-		computed: {	
-		},
-
 	}
 </script>
 

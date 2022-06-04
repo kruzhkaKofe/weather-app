@@ -1,41 +1,40 @@
 <template>
 	<div 
 		v-if="card.forecast"
-		class="today-card">
-		Сегодня: {{ minTemp }}...{{ maxTemp }}°; ветер {{ todayWindSpeed }} м/с;
+		class="facts-card">
+		<slot></slot>
 	</div>
 </template>
 
 <script>
 	export default {
 		props: {
-			card: {
-				type: Object,
+			days: {
+				type: Array,
 				required: true
 			}
 		},
 
 		computed: {
 			minTemp() {
-				const minT = Math.round(this.card.forecast.forecastday[0].day.mintemp_c)
-				return minT > 0 ? '+' + minT : minT
-			},
+				const minT = Math.round(this.card.forecast.forecastday[1].day.mintemp_c)
+				return minT > 0 ? `+${minT}` : `${minT}`
+			}, 
 
 			maxTemp() {
-				const maxT = Math.round(this.card.forecast.forecastday[0].day.maxtemp_c)
-				return maxT > 0 ? '+' + maxT : maxT
+				const maxT = Math.round(this.card.forecast.forecastday[1].day.maxtemp_c)
+				return maxT > 0 ? `+${maxT}` : `${maxT}`
 			},
 
-			todayWindSpeed() {
+			tomorrowWindSpeed() {
 				let myArr = []
-				const windArr  = this.card.forecast.forecastday[0].hour
+				const windArr  = this.card.forecast.forecastday[1].hour
 				for (let i = 0; i < windArr.length; i++) {
 					myArr.push(Math.floor(windArr[i].wind_kph))
 				}
 				myArr.sort((a, b) => a - b).splice(1, 22)
-				return myArr[0] + '-' + myArr[1]
+				return `${myArr[0]} - ${myArr[1]}`
 			}
-
 		}
 	}
 </script>
@@ -43,7 +42,7 @@
 <style lang="sass" scoped>
 @import "@/styles/variables.sass"
 
-.today-card
+.facts-card
 	width: 700px
 	height: 50px
 	padding: 10px 30px
@@ -53,4 +52,5 @@
 	margin-bottom: 20px
 	display: flex
 	align-items: center
+
 </style>

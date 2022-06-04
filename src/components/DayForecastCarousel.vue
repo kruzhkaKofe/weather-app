@@ -96,25 +96,35 @@ import "swiper/scss/navigation";
 			}
 		},
 
+		computed: {
+			week() {
+				return ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота']
+			},
+
+			month() {
+				return ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря']
+			}
+		},
+
 		methods: {
+			dateDay(day) {
+				return new Date(day.date)
+			},
+
+			numOfDay(day) {
+				return this.dateDay(day).getDay()
+			},
+
 			dateOfDay(day) {
-				return new Date(day.date).getDate()
+				return this.dateDay(day).getDate()
 			},
 
 			dayOfDay(day) {
-				const week = ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота']
-				const numOfDay =  new Date(day.date).getDay()
-				let now = new Date 
-				if (now.getDay() === numOfDay) {
-					return 'сегодня'
-				}
-				return week[numOfDay]
+				return new Date().getDay() === this.numOfDay(day) ? 'сегодня' : this.week[this.numOfDay(day)]
 			}, 
 
 			monthOfDay(day) {
-				const month = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря']
-				const numOfMonth =  new Date(day.date).getMonth()
-				return month[numOfMonth]
+				return this.month[this.dateDay(day).getMonth()]
 			},
 
 			windSpeed(day) {

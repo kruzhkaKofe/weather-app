@@ -9,6 +9,9 @@
     <div class="card-wrapper">
       <today-facts :card="card"/>
 		  <tomorrow-facts :card="card"/>
+      <!-- <facts-card 
+        :days="days"
+      /> -->
 		  <current-card 
 			  :card="card"
 			  :hours="hours"
@@ -43,6 +46,7 @@ import CurrentCard from '@/components/CurrentCard'
 import MapCard from '@/components/MapCard'
 import TodayFacts from '@/components/TodayFacts'
 import TomorrowFacts from '@/components/TomorrowFacts'
+import FactsCard from '@/components/FactsCard'
 
 export default {
   components: {
@@ -55,61 +59,20 @@ export default {
     MapCard,
 		TodayFacts,
 		TomorrowFacts,
+    FactsCard
   },
 
   data() {
     return {
-      card: {
-        current: {
-          condition: {
-          }
-        },
-        location: {
-          name: '',
-          localtime: '',
-          lon: '',
-          lat: '',
-        },
-        forecast: {
-          forecastday: [
-            {
-              astro: {
-                sunrise: '',
-                sunset: '',
-              },
-              day: {
-                mintemp_c: '',
-                maxtemp_c: '',
-               
-              },
-              hour: {
-                wind_kph: '',
-                condition: {
-                  text: '',
-                  icon: '',
-                }
-              }
-            },
-            {
-              day: {
-                mintemp_c: '',
-                maxtemp_c: '',
-              },
-              hour: {
-                wind_kph: ''
-              }
-            }
-          ],
-        }
-      },
+      card: {},
       hours: [],
       days: [],
     }
   },
 
   methods: {  
-    async fetchWeather(card) {
-      this.card = card
+    async fetchWeather(name) {
+      this.card = {}
       this.hours = []
       this.days = []
       try {
@@ -118,12 +81,11 @@ export default {
           url: 'http://api.weatherapi.com/v1/forecast.json',
           params: {
             key: 'e7048f0fbd8c4cb8853125913221403',
-            q: this.card.location.name,
+            q: name,
             lang: 'ru',
             days: '3',
           }
         })
-        
         this.card = res.data
         this.days = this.card.forecast.forecastday
         for (let i = 0; i < this.days.length; i++) {
@@ -140,6 +102,10 @@ export default {
     },
     
   },
+
+  mounted() {
+    this.fetchWeather('Izhevsk')
+  }
 
 }
 </script>

@@ -1,5 +1,8 @@
 <template>
-	<div class="card">
+	<div 
+    v-if="card.location"
+    class="card"
+  >
     <div class="card__location">
       <h1 class="card__location-name main-text">{{ card.location.name }}</h1>
       <time :datetime="card.location.localtime" class="card__location-time secondary-text">Now is {{ localtimeWithoutData }}</time>
@@ -8,7 +11,7 @@
       <p class="card__current-temp main-text">
         {{ currentTemp }}
       </p>
-      <img class="card__current-img" :src="card.current.condition.icon" alt="crrnt-img">
+      <img class="card__current-img" :src="card.current.condition.icon" alt="condition">
       <div class="card__condition">
         <p>{{ card.current.condition.text }}</p>
         <p class="card__condition-feelslike secondary-text">
@@ -65,10 +68,7 @@ import HourForecastCarousel from '@/components/HourForecastCarousel';
 				required: true
 			}
     },
-
-    methods: {      
-    },
-
+    
     computed: {
       windSpeed() {
         return (this.card.current.wind_kph * 1000 / 3600).toFixed(1)

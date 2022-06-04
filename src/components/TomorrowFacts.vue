@@ -1,6 +1,8 @@
 <template>
-	<div class="tomorrow-card">
-		<div class="tomorrow-card__item">Завтра: {{ minTemp }}...{{ maxTemp }}°; ветер {{ tomorrowWindSpeed }} м/с; </div>
+	<div 
+		v-if="card.forecast"
+		class="tomorrow-card">
+		Завтра: {{ minTemp }}...{{ maxTemp }}°; ветер {{ tomorrowWindSpeed }} м/с;
 	</div>
 </template>
 
@@ -51,7 +53,4 @@
 	display: flex
 	align-items: center
 
-	&__item
-		display: flex
-		align-items: center
 </style>

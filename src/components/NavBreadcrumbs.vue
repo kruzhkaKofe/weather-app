@@ -1,6 +1,6 @@
 <template>
 	<div  class="breadcrumbs">
-		<div v-if="card.location.name != ''" class="breadcrumbs-true">
+		<div v-if="card.location" class="breadcrumbs-true">
 			<a class="breadcrumbs-link" href="#">{{ card.location.country }}</a>
 			<a class="breadcrumbs-link" href="#">{{ card.location.region }}</a>
 			<p class="breadcrumbs-link">{{ card.location.name }}</p>
@@ -48,6 +48,5 @@
 	&-false
 		display: flex
 		align-items: center
-
 
 </style>

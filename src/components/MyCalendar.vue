@@ -1,9 +1,12 @@
 <template>
-	<div class="calendar">
+	<div 
+		v-if="card.location"
+		class="calendar"
+	>
 		<div class="calendar-month">
 			<div 
 				class="calendar-month__item"
-				v-for="(month, i) in monthName"
+				v-for="(month, i) in currentMonth"
 				:key="i"
 			>	
 				<input
@@ -11,7 +14,7 @@
 					type="radio" 
 					:id="i"
 					name="months" 
-					:checked="checkedMonth(month)"
+					:checked="checkedMonth"
 					:value="month" 
 					v-model="choisedMonth"
 				>
@@ -27,17 +30,15 @@
 				<time 
 					class="calendar-days__day-item"
 					:class="{
-						'previous-month': isPreviousMonth(),
-						'previous': isPreviousDays(n),
-						'today': n === new Date().getDate() && choisedMonth === monthName[new Date().getMonth()],
-						'choised': choisedDay === n,
+						'previous': isToday(n) === false,
+						'today': isToday(n),
+						'choised': dateValue === dateTime(n),
 					}"
 					:datetime="dateTime(n)"
-					@click="takeDay(n), findHistory()"
+					@click="findHistory(n)"
 				>
 					{{ n }}
 				</time>
-
 			</div>
 		</div>
 	</div>
@@ -56,75 +57,47 @@
 
 		data() {
 			return {
-				date: '',
 				dateValue: '',
 				monthName: ['Янв.', 'Фефр.', 'Март', 'Апр.', 'Май', 'Июнь', 'Июль', 'Авг.', 'Сент.', 'Окт.', 'Нояб.', 'Дек.'],
 				choisedMonth: null,
-				choisedDay: null,
 			}
 		},
 
 		methods: {
-			currentMonth() {
-				const numOfMonth = new Date().getMonth()
-				this.monthName = this.monthName.filter(m => this.monthName.indexOf(m) <= numOfMonth)
-				this.choisedMonth = this.monthName[numOfMonth]
-			},
-
-			checkedMonth(month) {
-				const numOfMonth = new Date().getMonth()
-				if (this.monthName[numOfMonth] === month) {
+			isToday(n) {
+				if (n === this.currentDate.getDate() && this.choisedMonth === this.monthName[this.numOfMonth]) {
 					return true
 				}
-    	},
-
-			isPreviousMonth(n) {
-				const numOfMonth = new Date().getMonth()
-				if (numOfMonth > this.monthName.indexOf(this.choisedMonth)){
-					return true
-				}
-			},
-
-			isPreviousDays(n) {
-				const numOfMonth = new Date().getMonth()
-				if (this.choisedMonth === this.monthName[numOfMonth] && n < new Date().getDate()) {
-					return true
+				if (new Date(this.dateTime(n)).getTime() < this.currentDate.getTime()) {
+					return false
 				}
 			},
 
 			dateTime(n) {
-				const d = new Date()
-				const year = d.getFullYear()
+				const year = this.currentDate.getFullYear()
 				const month = (this.monthName.indexOf(this.choisedMonth) + 1).toString().padStart(2, '0')
 				const day = n.toString().padStart(2, '0')
 				return `${year}-${month}-${day}`
 			},
 
-			takeDay(n) {
-				this.choisedDay = n
+			findHistory(n) {
 				this.dateValue = this.dateTime(n)
-				console.log(this.dateValue)
-			}, 
-
-			findHistory() {
-				const d = new Date()
-				if (new Date(this.dateValue).getTime() <= d) {
+				if (new Date(this.dateValue).getTime() <= this.currentDate) {
 					this.$emit('fetchHistoryOfWeather', this.dateValue)
-					this.dateValue = ''
+					console.log(this.dateValue)
 				}
-			}
-
-
+				
+			},
 
 		},
-		
+
 		mounted() {
-			this.currentMonth()
+			this.choisedMonth = this.monthName[this.numOfMonth];
 		},
 
 		computed: {
 			quantityDays() {
-				if (this.choisedMonth === 'Февр.' && (new Date().getYear()) % 4 === 0) {
+				if (this.choisedMonth === 'Февр.' && (this.currentDate.getFullYear()) % 4 === 0) {
 					return 29;
 				} else {
 					switch(this.choisedMonth) {
@@ -140,6 +113,24 @@
 					}
 				}
 			},
+
+			currentDate() {
+				return new Date()
+			},
+
+			numOfMonth() {
+				return this.currentDate.getMonth()
+			},
+
+			currentMonth() {
+				return this.monthName.filter(m => this.monthName.indexOf(m) <= this.numOfMonth)
+			},
+
+			checkedMonth() {
+				if (this.monthName[this.numOfMonth]) {
+					return true
+				}
+    	},
 			
 		},
 

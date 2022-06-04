@@ -1,5 +1,8 @@
 <template>
-	<div class="map">
+	<div 
+		v-if="card.location"
+		class="map"
+	>
 		<strong>Map will be here soon ...</strong>
 		<div>Lon: {{ card.location.lon }} </div>
 		<div>Lat: {{ card.location.lat }} </div>

@@ -13,10 +13,10 @@
         :card="card"
         @fetchHistoryOfWeather="fetchHistory"
       />
-      <!-- <current-card
+      <history-card
         :card="card"
         :hours="hours"
-      /> -->
+      />
     </div>
 	</div>
 </template>
@@ -25,100 +25,57 @@
 import axios from 'axios';
 import MyHeader from '@/components/MyHeader';
 import NavBreadcrumbs from '@/components/NavBreadcrumbs';
-import CurrentCard from '@/components/CurrentCard'
 import MyCalendar from '@/components/MyCalendar'
-import MapCard from '@/components/MapCard'
+import HistoryCard from '@/components/HistoryCard'
 
 	export default {
 		components: {
     MyHeader,
 		NavBreadcrumbs,
-		CurrentCard,
 		MyCalendar,
-    MapCard,
+		HistoryCard,
   },
 
 	data() {
     return {
       dateValue: '',
-      card: {
-        current: {
-          condition: {
-          }
-        },
-        location: {
-          name: '',
-          localtime: '',
-          lon: '',
-          lat: '',
-        },
-        forecast: {
-          forecastday: [
-            {
-              astro: {
-                sunrise: '',
-                sunset: '',
-              },
-              day: {
-                mintemp_c: '',
-                maxtemp_c: '',
-               
-              },
-              hour: {
-                wind_kph: '',
-                condition: {
-                  text: '',
-                  icon: '',
-                }
-              }
-            },
-            {
-              day: {
-                mintemp_c: '',
-                maxtemp_c: '',
-              },
-              hour: {
-                wind_kph: ''
-              }
-            }
-          ],
-        }
-      },
+      card: {},
       hours: [],
       days: [],
     }
   },
 
-  methods: {  
-    async fetchWeather(card) {
-      this.card = card
+  methods: {
+    async fetchWeather(name) {
+      this.card = {}
       this.hours = []
+      this.days = []
       try {
         const res = await axios({
           methods: 'GET',
           url: 'http://api.weatherapi.com/v1/forecast.json',
           params: {
             key: 'e7048f0fbd8c4cb8853125913221403',
-            q: this.card.location.name,
+            q: name,
             lang: 'ru',
-
           }
         })
-        console.log(res)
         this.card = res.data
-        this.hours = this.card.forecast.forecastday[0].hour
-        for (let i = 0; i < this.hours.length; i++) {
-          this.hours[i].time = this.hours[i].time.split('').slice(11).join('')
-          this.hours[i].temp_c = Math.round(this.hours[i].temp_c)
+        this.days = this.card.forecast.forecastday
+        for (let i = 0; i < this.days.length; i++) {
+          for (let j = 0; j < this.days[i].hour.length; j++) {
+            this.days[i].hour[j].time = this.days[i].hour[j].time.split('').slice(11).join('')
+            this.days[i].hour[j].temp_c = Math.round(this.days[i].hour[j].temp_c)
+          }
         }
+        this.hours = this.card.forecast.forecastday[0].hour
+        console.log(this.card)
       } catch(e) {
         console.log(e)
       }
     },
-    
+
     async fetchHistory(dateValue) {
-      this.dateValue = dateValue
-      this.hours = []
       try {
         const res  = await axios ({
           methods: 'GET',
@@ -127,7 +84,7 @@ import MapCard from '@/components/MapCard'
             key: 'e7048f0fbd8c4cb8853125913221403',
             q: this.card.location.name,
             lang: 'ru',
-            dt: this.dateValue,
+            dt: dateValue,
           }
         })
         this.card = res.data
@@ -139,11 +96,8 @@ import MapCard from '@/components/MapCard'
         console.log(this.card)
       } catch(e) {
         console.log(e)
-      
       }
 		},
-
-
 
   },
 
