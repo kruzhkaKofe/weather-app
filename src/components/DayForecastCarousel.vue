@@ -12,7 +12,7 @@
 				class="day-carousel-slide" 
 				v-for="(day, i) in days" 
 				:key="i"
-				@click="$router.push(`/#${dateOfDay(day)}`)" 
+				@click="$router.push(`/details/#${dateOfDay(day)}`)" 
 			>
 				<div class="day-carousel-slide__date">
 					<p class="day-carousel-slide__date-num">{{ dateOfDay(day) }}</p> 
@@ -21,31 +21,13 @@
 				</div>
 				<div class="day-carousel-slide__main">
 					<div class="day-carousel-slide__average">
-						<p  
-							v-if="day.day.avgtemp_c > 0" 
-							class="day-carousel-slide__average-temp"
-						>
-							+{{ averageTemp(day) }}
-						</p>
-						<p 
-							v-else 
-							class="day-carousel-slide__average-temp"
-						>
+						<p class="day-carousel-slide__average-temp">
 							{{ averageTemp(day) }}
 						</p>
 						<img class="day-carousel-slide__average-img" :src="day.day.condition.icon" alt="crrnt-img">
 						<div class="day-carousel-slide__condition">
 							<p>{{ day.day.condition.text }}</p>
-							<p
-								v-if="day.day.mintemp_c > 0"
-								class="day-carousel-slide__condition-feelslike secondary-text"
-							>
-								Минимум: +{{ minTemp(day) }}
-							</p>
-							<p
-								v-else
-								class="day-carousel-slide__condition-feelslike secondary-text"
-							>
+							<p class="day-carousel-slide__condition-feelslike secondary-text">
 								Минимум: {{ minTemp(day) }}
 							</p>
 						</div>
@@ -107,8 +89,8 @@ import "swiper/scss/navigation";
 		},
 
 		methods: {
-			dateDay(day) {
-				return new Date(day.date)
+			dateDay(d) {
+				return new Date(d.date)
 			},
 
 			numOfDay(day) {
@@ -136,11 +118,13 @@ import "swiper/scss/navigation";
       },
 
       averageTemp(day){ 
-        return Math.round(day.day.avgtemp_c)
+				const avg = Math.round(day.day.avgtemp_c)
+        return avg > 0 ? `+${avg}` : `${avg}`
       },
 
       minTemp(day){ 
-        return Math.round(day.day.mintemp_c)
+				const min = Math.round(day.day.mintemp_c)
+        return min > 0 ? `+${min}` : `${min}`
       },
 
 		},

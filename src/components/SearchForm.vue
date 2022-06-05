@@ -13,7 +13,7 @@
 
 		data() {
 			return {
-				name: 'Izhevsk',
+				name: '',
     	}
   	},
 		
@@ -25,6 +25,7 @@
 		},
 		
 		mounted() {
+			this.name = 'Izhevsk'
 			this.findWeather(this.name)
 		}
 

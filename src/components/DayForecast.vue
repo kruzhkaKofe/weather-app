@@ -4,7 +4,7 @@
 			class="forecast-item"
 			v-for="(day, i) in days"
 			:key="i"
-			:id="`${dateOfDay(day)}`"
+			:id="dateOfDay(day)"
 		>
 			<div 
 				class="forecast-date"
@@ -140,9 +140,9 @@
 
 		},
 
-		methods: {			
-			dateDay(day) {
-				return new Date(day.date)
+		methods: {
+			dateDay(a) {
+				return new Date(a.date)
 			},
 
 			numOfDay(day) {

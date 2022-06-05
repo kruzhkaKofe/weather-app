@@ -37,7 +37,6 @@ import SearchForm from '@/components/SearchForm'
 			}
 		}
 		
-
 	}
 </script>
 

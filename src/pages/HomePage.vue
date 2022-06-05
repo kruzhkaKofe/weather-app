@@ -68,9 +68,6 @@ export default {
 
   methods: {  
     async fetchWeather(name) {
-      this.card = {}
-      this.hours = []
-      this.days = []
       try {
         const res = await axios({
           methods: 'GET',
