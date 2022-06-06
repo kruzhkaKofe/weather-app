@@ -22,11 +22,12 @@
 				this.$emit('findWeatherInCity', this.name);
 				this.name = '';
 			},
+
 		},
 		
 		mounted() {
 			this.name = 'Izhevsk'
-			this.findWeather(this.name)
+			this.findWeather()
 		}
 
 	}

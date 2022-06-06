@@ -10,13 +10,17 @@
   >
     <nav-breadcrumbs :card="card"/>
     <div class="card-wrapper">
-      <facts-card>Сегодня: {{ minTempToday }}...{{ maxTempToday }}°; ветер {{ todayWindSpeed }} м/с;</facts-card>
-      <facts-card>Завтра: {{ minTempTomorrow }}...{{ maxTempTomorrow }}°; ветер {{ tomorrowWindSpeed }} м/с;</facts-card>
+      <facts-card
+        v-for="(n, idx) in 2"
+        :key="idx"
+      >
+        {{ facts(n) }}
+      </facts-card>
 		  <current-card 
 			  :card="card"
 			  :hours="hours"
 		  />
-		  <map-card :card="card"/>
+		  <!-- <map-card :card="card"/> -->
     </div>
     <day-forecast-carousel
       :days="days"
@@ -32,30 +36,30 @@
     <day-forecast 
       :days="days"
     />
-  </div>	
+  </div>
 </template>
 
 <script>
-import axios from 'axios';
 import MyHeader from '@/components/MyHeader';
 import NavBreadcrumbs from '@/components/NavBreadcrumbs';
+import FactsCard from '@/components/FactsCard'
+import CurrentCard from '@/components/CurrentCard'
+import MapCard from '@/components/MapCard'
 import DayForecastCarousel from '@/components/DayForecastCarousel';
 import SunCard from '@/components/SunCard';
 import DayForecast from '@/components/DayForecast';
-import CurrentCard from '@/components/CurrentCard'
-import MapCard from '@/components/MapCard'
-import FactsCard from '@/components/FactsCard'
+import { weatherLoader } from '@/plugins/api.js'
 
 export default {
   components: {
     MyHeader,
     NavBreadcrumbs,
+    FactsCard,
+    CurrentCard,
+    MapCard,
     DayForecastCarousel,
     SunCard,
     DayForecast,
-    CurrentCard,
-    MapCard,
-    FactsCard,
   },
 
   data() {
@@ -67,76 +71,54 @@ export default {
   },
 
   methods: {  
-    async fetchWeather(name) {
+    async fetchWeather(name)  {
       try {
-        const res = await axios({
-          methods: 'GET',
-          url: 'http://api.weatherapi.com/v1/forecast.json',
-          params: {
-            key: 'e7048f0fbd8c4cb8853125913221403',
-            q: name,
-            lang: 'ru',
-            days: '3',
-          }
-        })
+        const res = await weatherLoader(name);
         this.card = res.data
         this.days = this.card.forecast.forecastday
-        for (let i = 0; i < this.days.length; i++) {
-          for (let j = 0; j < this.days[i].hour.length; j++) {
-            this.days[i].hour[j].time = this.days[i].hour[j].time.split('').slice(11).join('')
-            this.days[i].hour[j].temp_c = Math.round(this.days[i].hour[j].temp_c)
-          }
-        }
+        this.days.forEach(day => {
+          day.hour.forEach(field => {
+            field.time = field.time.split('').slice(11).join('')
+            field.temp_c = Math.round(field.temp_c)
+          })
+        })
         this.hours = this.card.forecast.forecastday[0].hour
         console.log(this.card)
       } catch(e) {
         console.log(e)
       }
     },
-    
-  },
 
-  computed: {
-    minTempToday() {
-      const minT = Math.round(this.card.forecast.forecastday[0].day.mintemp_c)
+    minTemp(dayNum) {
+      const minT = Math.round(this.card.forecast.forecastday[dayNum].day.mintemp_c)
       return minT > 0 ? `+${minT}` : `${minT}`
     }, 
 
-    maxTempToday() {
-      const maxT = Math.round(this.card.forecast.forecastday[0].day.maxtemp_c)
+     maxTemp(dayNum) {
+      let maxT = Math.round(this.card.forecast.forecastday[dayNum].day.maxtemp_c)
       return maxT > 0 ? `+${maxT}` : `${maxT}`
     },
 
-    todayWindSpeed() {
+    windSpeed(dayNum) {
       let myArr = []
-      const windArr  = this.card.forecast.forecastday[0].hour
-      for (let i = 0; i < windArr.length; i++) {
-        myArr.push(Math.floor(windArr[i].wind_kph))
-      }
+      const windArr = this.card.forecast.forecastday[dayNum].hour
+      windArr.forEach(f => {
+        myArr.push(Math.floor(f.wind_kph))
+      })
       myArr.sort((a, b) => a - b).splice(1, 22)
       return `${myArr[0]} - ${myArr[1]}`
     },
 
-    minTempTomorrow() {
-				const minT = Math.round(this.card.forecast.forecastday[1].day.mintemp_c)
-				return minT > 0 ? `+${minT}` : `${minT}`
-			}, 
+    facts(dayNum) {
+      const min = this.minTemp(dayNum)
+      const max = this.maxTemp(dayNum)
+      const wind = this.windSpeed(dayNum)
+      return  dayNum === 0 
+        ? `Сегодня: ${min}...${max}°; ветер ${wind} м/с;`
+        : `Завтра: ${min}...${max}°; ветер ${wind} м/с;`
+    }
 
-    maxTempTomorrow() {
-      const maxT = Math.round(this.card.forecast.forecastday[1].day.maxtemp_c)
-      return maxT > 0 ? `+${maxT}` : `${maxT}`
-    },
-
-    tomorrowWindSpeed() {
-      let myArr = []
-      const windArr  = this.card.forecast.forecastday[1].hour
-      for (let i = 0; i < windArr.length; i++) {
-        myArr.push(Math.floor(windArr[i].wind_kph))
-      }
-      myArr.sort((a, b) => a - b).splice(1, 22)
-      return `${myArr[0]} - ${myArr[1]}`
-    },
-  }
+  },
 
 }
 </script>

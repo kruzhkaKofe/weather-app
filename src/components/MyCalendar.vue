@@ -42,7 +42,7 @@
 			</div>
 		</div>
 	</div>
-	<!-- <button @click="test">test</button> -->
+	<!-- <button @click="dateTimeDefault">test</button> -->
 
 </template>
 
@@ -57,6 +57,7 @@
 
 		data() {
 			return {
+				name: '',
 				dateValue: '',
 				choisedMonth: null,
 			}
@@ -82,19 +83,18 @@
 			findHistory(n) {
 				this.dateValue = this.dateTime(n)
 				if (new Date(this.dateValue).getTime() <= this.currentDate) {
-					this.$emit('fetchHistoryOfWeather', this.dateValue)
-					console.log(this.dateValue)
+					this.$emit('fetchHistoryOfWeather', this.dateValue, this.name)
 				}
 			},
 
-			chooseMonth() {
+			defaultDate() {
 				this.choisedMonth = this.monthName[this.numOfMonth];
 			}
 
 		},
 
 		mounted() {
-			this.chooseMonth()
+			this.defaultDate()
 		},
 
 		computed: {
