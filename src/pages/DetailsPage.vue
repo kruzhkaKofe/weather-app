@@ -9,16 +9,16 @@
 			:card="card"
 		/>
 		<day-forecast 
-      :days="days"
+      :card="card"
     />
 	</div>
 </template>
 
 <script>
-import axios from 'axios';
 import MyHeader from '@/components/MyHeader'
 import NavBreadcrumbs from '@/components/NavBreadcrumbs'
 import DayForecast from '@/components/DayForecast'
+import { weatherLoader } from '@/plugins/api.js'
 
 	export default {
 		components: {
@@ -30,36 +30,26 @@ import DayForecast from '@/components/DayForecast'
 		data() {
 			return {
 				card: {},
-				days: [],
 			}
 		},
 
 		methods: {
 			async fetchWeather(name) {
 				try {
-					const res = await axios({
-						methods: 'GET',
-						url: 'http://api.weatherapi.com/v1/forecast.json',
-						params: {
-							key: 'e7048f0fbd8c4cb8853125913221403',
-							q: name,
-							lang: 'ru',
-							days: '3',
-						}
-					})
+					const res = await weatherLoader(name);
 					this.card = res.data
-					this.days = this.card.forecast.forecastday
-					for (let i = 0; i < this.days.length; i++) {
-						for (let j = 0; j < this.days[i].hour.length; j++) {
-							this.days[i].hour[j].time = this.days[i].hour[j].time.split('').slice(11).join('')
-							this.days[i].hour[j].temp_c = Math.round(this.days[i].hour[j].temp_c)
-						}
-					}
+					this.card.forecast.forecastday.forEach(day => {
+						day.hour.forEach(field => {
+							field.time = field.time.split('').slice(11).join('')
+							field.temp_c = Math.round(field.temp_c)
+						})
+					})
 					console.log(this.card)
 				} catch(e) {
 					console.log(e)
 				}
     	},
+
 		},
 
 	}

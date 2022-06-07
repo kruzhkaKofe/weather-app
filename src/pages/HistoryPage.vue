@@ -95,7 +95,6 @@ import { weatherLoader } from '@/plugins/api.js'
 </script>
 
 <style lang="sass" scoped>
-@import "@/styles/variables.sass"
 
 .card-wrapper
   display: flex

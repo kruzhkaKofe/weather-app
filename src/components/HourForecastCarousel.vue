@@ -8,7 +8,7 @@
 	>
 		<swiper-slide 
 			class="carousel-slide" 
-			v-for="(hour, i) of hours" 
+			v-for="(hour, i) in this.card.forecast.forecastday[0].hour" 
 			:key="i" 
 		>
 			<p class="carousel-slide__time secondary-text" >
@@ -33,15 +33,13 @@
 			</p>
 		</swiper-slide>
 	</swiper>
-
-	<!-- <button @click="hourTime">testSlider</button> -->
 </template>
 
 <script>
 	import { Swiper, SwiperSlide } from "swiper/vue";
 	import { Navigation } from "swiper";
-	import 'swiper/scss';
-	import "swiper/scss/navigation";
+	import 'swiper/css';
+	import "swiper/css/navigation";
 
 	export default {
 		components: {
@@ -56,17 +54,16 @@
 		},
 
 		props: {
-      hours: {
-				type: Array,
+      card: {
+				type: Object,
 				required: true
 			}
     },
-
+		
 	}
 </script>
 
 <style lang="sass" scoped>
-@import "@/styles/variables.sass"
 
 .carousel
 	height: 150px

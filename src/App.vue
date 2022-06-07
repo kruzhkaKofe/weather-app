@@ -9,7 +9,6 @@
 </script>
 
 <style lang="sass">
-@import "@/styles/variables.sass"
 
 *
   margin: 0

@@ -41,7 +41,6 @@ import SearchForm from '@/components/SearchForm'
 </script>
 
 <style lang="sass" scoped>
-@import "@/styles/variables.sass"
 
 .header
 	display: flex

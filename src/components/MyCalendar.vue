@@ -144,7 +144,6 @@
 </script>
 
 <style lang="sass" scoped>
-@import "@/styles/variables.sass"
 
 .previous-month,
 .previous

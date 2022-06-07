@@ -5,10 +5,12 @@
 		</div>
 	</div>
   <div 
-    v-if="card.forecast"
+    v-if="card.location"
     class="inner-wrapper"
   >
-    <nav-breadcrumbs :card="card"/>
+    <nav-breadcrumbs 
+      :card="card"
+    />
     <div class="card-wrapper">
       <facts-card
         v-for="(n, idx) in 2"
@@ -18,12 +20,11 @@
       </facts-card>
 		  <current-card 
 			  :card="card"
-			  :hours="hours"
 		  />
 		  <!-- <map-card :card="card"/> -->
     </div>
     <day-forecast-carousel
-      :days="days"
+      :card="card"
     />
     <div class="some-cards">
       <sun-card 
@@ -34,7 +35,7 @@
       </div>
     </div>
     <day-forecast 
-      :days="days"
+      :card="card"
     />
   </div>
 </template>
@@ -49,6 +50,7 @@ import DayForecastCarousel from '@/components/DayForecastCarousel';
 import SunCard from '@/components/SunCard';
 import DayForecast from '@/components/DayForecast';
 import { weatherLoader } from '@/plugins/api.js'
+import { averageWindSpeed } from '@/plugins/naturalCondition'
 
 export default {
   components: {
@@ -65,8 +67,6 @@ export default {
   data() {
     return {
       card: {},
-      hours: [],
-      days: [],
     }
   },
 
@@ -75,14 +75,12 @@ export default {
       try {
         const res = await weatherLoader(name);
         this.card = res.data
-        this.days = this.card.forecast.forecastday
-        this.days.forEach(day => {
+        this.card.forecast.forecastday.forEach(day => {
           day.hour.forEach(field => {
             field.time = field.time.split('').slice(11).join('')
             field.temp_c = Math.round(field.temp_c)
           })
         })
-        this.hours = this.card.forecast.forecastday[0].hour
         console.log(this.card)
       } catch(e) {
         console.log(e)
@@ -99,20 +97,14 @@ export default {
       return maxT > 0 ? `+${maxT}` : `${maxT}`
     },
 
-    windSpeed(dayNum) {
-      let myArr = []
-      const windArr = this.card.forecast.forecastday[dayNum].hour
-      windArr.forEach(f => {
-        myArr.push(Math.floor(f.wind_kph))
-      })
-      myArr.sort((a, b) => a - b).splice(1, 22)
-      return `${myArr[0]} - ${myArr[1]}`
+    avgWindSpeed(dayNum) {
+      return averageWindSpeed(this.card.forecast.forecastday[dayNum].hour)
     },
 
     facts(dayNum) {
       const min = this.minTemp(dayNum)
       const max = this.maxTemp(dayNum)
-      const wind = this.windSpeed(dayNum)
+      const wind = this.avgWindSpeed(dayNum)
       return  dayNum === 0 
         ? `Сегодня: ${min}...${max}°; ветер ${wind} м/с;`
         : `Завтра: ${min}...${max}°; ветер ${wind} м/с;`
@@ -124,7 +116,6 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-@import "@/styles/variables.sass"
 
 .inner-wrapper
   max-width: 1440px

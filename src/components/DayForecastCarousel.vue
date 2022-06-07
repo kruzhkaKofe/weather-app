@@ -1,6 +1,6 @@
 <template>
 	<div class="day-forecast">
-		<h2 class="day-forecast__header">Прогноз на {{ this.days.length }} дня</h2>	
+		<h2 class="day-forecast__header">Прогноз на {{ this.card.forecast.forecastday.length }} дня</h2>	
 		<swiper
 			class="day-carousel"
 			:slidesPerView="2"
@@ -10,7 +10,7 @@
 		>
 			<swiper-slide
 				class="day-carousel-slide" 
-				v-for="(day, i) in days" 
+				v-for="(day, i) in this.card.forecast.forecastday" 
 				:key="i"
 				@click="$router.push(`/details/#${dateOfDay(day)}`)" 
 			>
@@ -56,8 +56,8 @@
 <script>
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation } from "swiper";
-import 'swiper/scss';
-import "swiper/scss/navigation";
+import 'swiper/css';
+import "swiper/css/navigation";
 
 	export default {
 		components: {
@@ -72,8 +72,8 @@ import "swiper/scss/navigation";
   	},
 
 		props: {
-			days: {
-				type: Array,
+			card: {
+				type: Object,
 				required: true
 			}
 		},
@@ -133,7 +133,6 @@ import "swiper/scss/navigation";
 </script>
 
 <style lang="sass" scoped>
-@import "@/styles/variables.sass"
 
 .day-forecast
 	height: 350px
@@ -185,8 +184,6 @@ import "swiper/scss/navigation";
 			align-items: center
 			justify-content: center
 			padding-left: 50px
-
-		&__location
 
 		&__average
 			display: flex

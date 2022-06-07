@@ -32,7 +32,7 @@
     </div>
     <div class="card__line"></div>
     <hour-forecast-carousel 
-			:hours="hours"
+			:card="card"
 		/>
   </div>
 </template>
@@ -50,10 +50,6 @@ import HourForecastCarousel from '@/components/HourForecastCarousel';
         type: Object,
         required: true,
       },
-      hours: {
-				type: Array,
-				required: true
-			}
     },
 
     computed: {
@@ -84,7 +80,6 @@ import HourForecastCarousel from '@/components/HourForecastCarousel';
 </script>
 
 <style lang="sass" scoped>
-@import "@/styles/variables.sass"
 
 .main-text
 	font-size: $medium
@@ -97,8 +92,6 @@ import HourForecastCarousel from '@/components/HourForecastCarousel';
 	font-size: $small
 	border-radius: $default
 	background-color: $main
-
-	&__location
 
 	&__history
 		display: flex

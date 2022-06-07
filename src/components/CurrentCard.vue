@@ -22,9 +22,9 @@
     <div class="card__facts">
       <div class="card__facts-item">
         <img class="card__facts-image" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22 viewBox=%220 0 24 24%22%3E %3Cg fill=%22%23FFF%22 fill-rule=%22nonzero%22%3E %3Cpath d=%22M6 11.5h5.688a3.75 3.75 0 1 0-1.95-6.954.75.75 0 0 0 .781 1.28A2.25 2.25 0 1 1 11.688 10L6 10.001a.75.75 0 1 0 0 1.5zM2 15h9.966a1.5 1.5 0 1 1-.779 2.782.75.75 0 0 0-.78 1.281 3 3 0 1 0 1.56-5.563H1.999A.75.75 0 1 0 2 15zM16.667 13h2.251a3 3 0 1 0-1.56-5.563.75.75 0 0 0 .781 1.28 1.5 1.5 0 1 1 .779 2.782l-2.251.001a.75.75 0 1 0 0 1.5z%22/%3E %3C/g%3E %3C/svg%3E" alt="wind">
-        <p class="card__facts-wind">{{ windSpeed }} м/с, {{ windDirection }} 
+        <p class="card__facts-wind">{{ windSpeed }} м/с, {{ currentWindDirection(1) }} 
           <img 
-            :style="windDirectionIcon"
+            :style="currentWindDirection(0)"
             class="card__facts-wind-direction-icon" 
             src="https://yandex-pogoda.static-storage.net/1nZ7g6572/cfeea7iuq/xXAlVRFcwMYO59kTa1ajgf-3R6jvCcSfAO-X8LZcdEDWPpBr73JmFom9v09-OcLVnIWnfUiCz37yJt1I9ONCalx0gRktQCTnnp95yj8CDx3vDwP1u-jgyywDjnTWENwotn6sv3e_gk55GVMfEp3aLXSJt0XU5sPCDhptaVRzXkqxrNXNHUiwL5JPAWpvDmPNM6fL9QM4QNcE397canA0qNL-uFeLN56auUFzb2axBoGY-d_dxC4nulI-ccEQp8IKkcANOV1UTKOqu61aD8anJcvH9z3DEGSrwGeChKokOPiaCkh_-9OaepXt4_vyGfa1uFEH0fhmny5GmsH9CDdS8oVsMbURGEzPIteJRjOmq1GTh_vBF7ykT4D75mw21KQwWs6Y03Pz2rpNrSMDVtXWHTjBt-nUmic-VpqJQfSb9pqV3PmdgUBQx5aHdZZ3Vpvdxw_jURe4qMuctw7IapwE3J5qWAsbfxL6_TV7O0I16glIJTft8OLnTi4GFcFEd7bGBbQ50clEcCOCF30Gsx5vwRv_G73XdMCH_JcKLBZ05Bhq5jh7oxtSUmXxb-eeVe59hEG3pThiy-qSIn2RdMMG3snMgY2pVDCvjh9Z_vNqZzGH34PFcxTc4_xfPkj2tCj4yiIkt-_P2nqJtYevdiX2PRiNW8Hcpg8uEq4pZWxPGq7lqP01WZjIb77TyX5TtqNRyxsHJQ8IoKM4d8aY2pi4WE6OhMvPG2ZmTfXrB3a1wgEsAaPROJ7vUqIq1bkId8LSsXh9mQWQ4JOKV2VG09J_qQu7S6EfAHSXtI8aENJQHDSiUoiLkwtyQsXFjyNWmcadhBEzLeQGf_4anlXtmJ_SXjkULU0RgHjvKheZJmduVxkDcwtBk8jAF-hzHqjaMFhkKk68P7cPCh75uSvj_oUijSQtk-ngFq-2_oJp5VyDsooprMlttcykky4PmXY3SrsJh89HZRckTIs0s8IIInSMHL7iwD-v78aeTcnvYyIVRo0EdZv5uKKLzuLmYTFUmzqSEexxtY0cAIMGj8V2-4bvbTePd3VH4DxHkIcCnOrUdMDW9pTzb8MG3p0Jo6tOnW6R-B3Lodgy67KWmvF95AsKvrkw0Q0RiPjjBstBZreusykr3w9d6-j8q-THRmQ6SJCc4posY6_rmmJVhWMTdqUSoQTRx01AirNC4gqJDXS_MvJtWOVhCWxU1yo_xRZjhvvRI4PvRfc0RIt876pAulz4sNamPHMjw2qObSXrk3ZhZh2IFT9dhPJvSg4uXf34v6KiCZTNmalQDFvSc-l-88KXJReP-6HLSFRbRGeKlI6cFBje4ghXN3d-4p2Jp2PGcZL5HMVfvUAaf6LOvn3hiONSkmV4YTnxtCybVkORomMyv92Xr1dp48goX_CfOlzuNKhEou7ge__Dgr45QScbpmFinfQF3_Gsqhe2lpZ9JdCbcpLJ1GGdhaAkH5YLffrHLl9BF3PnvTfkkP-075rEmigE4NaSiDMTk-4awZmbl8YFzi1k8RdVZDJjQkKi5SUcNyIaucCBqT3U9CsGzx3qs-LjJfOvR3mbzECjtMtunPasZOSq4hQ_uxu2jhVBT--mbc4BJN1DOeCep6Kahp1teOe6DnVIwaFdqHT3mgdJBoOGK93784N9OzSsT2gPjgx2zHyogtqgd6tLtkJtlQN7vvESCYDh5_W4CpO6BrrR9VhvxvZl4MEdjSCkby6X6ZaHjovRc7fLOeMcNCOwU7KAkqRg2OLuTMM7S9r-mbnbGx6BYomoKbv9dFoA" 
             alt="Направление ветра"
@@ -41,21 +41,17 @@
       </div>
     </div>
     <div class="card__line"></div>
-    <hour-forecast-carousel :hours="hours"/>
+    <hour-forecast-carousel :card="card"/>
   </div>
 </template>
 
 <script>
 import HourForecastCarousel from '@/components/HourForecastCarousel';
+import { windDirection, windSpeedFormated, mmPressure, timeWithoutData} from '@/plugins/naturalCondition'
 
 	export default {
     components: {
       HourForecastCarousel,
-    },
-
-    data() {
-      return {
-      }
     },
 
     props: {
@@ -63,25 +59,25 @@ import HourForecastCarousel from '@/components/HourForecastCarousel';
         type: Object,
         required: true,
       },
-      hours: {
-				type: Array,
-				required: true
-			}
+    },
+
+    methods: {
+      currentWindDirection(n) {
+        return windDirection(this.card.current.wind_dir)[n]
+      },
     },
     
     computed: {
       windSpeed() {
-        return (this.card.current.wind_kph * 1000 / 3600).toFixed(1)
+        return windSpeedFormated(this.card.current.wind_kph)
       },
 
       pressureMercury(){
-        return Math.round(this.card.current.pressure_mb * 0.75006156)
+        return mmPressure(this.card.current.pressure_mb)
       },
 
       localtimeWithoutData(){
-        const minutes = (new Date(this.card.location.localtime).getMinutes()).toString().padStart(2, '0')
-        const hours = (new Date(this.card.location.localtime).getHours()).toString().padStart(2, '0')
-        return`${hours}:${minutes}`
+        return timeWithoutData(this.card.location.localtime)
       },
 
       feelsLikeTemp(){
@@ -94,68 +90,11 @@ import HourForecastCarousel from '@/components/HourForecastCarousel';
 				return temp > 0 ? `+${temp}` : `${temp}`
       },
 
-      windDirection() {
-        let dir = this.card.current.wind_dir
-        if (dir == 'N') {
-          return 'С'
-        }
-        if (dir == 'NNE' || dir == 'NE' || dir == 'ENE') {
-          return 'СВ'
-        }
-        if (dir == 'NNW' || dir == 'NW' || dir == 'WNW') {
-          return 'СЗ'
-        }
-         if (dir == 'S') {
-          return 'Ю'
-        }
-        if (dir == 'SSE' || dir == 'SE' || dir == 'ESE') {
-          return 'ЮВ'
-        }
-        if (dir == 'SSW' || dir == 'SW' || dir == 'WSW') {
-          return 'ЮЗ'
-        }
-        if (dir == 'E') {
-          return 'В'
-        }
-         if (dir == 'W') {
-          return 'З'
-        }
-      },
-
-      windDirectionIcon() {
-        let dir = this.card.current.wind_dir
-        if (dir == 'N') {
-          return 'transform: rotate(0deg)'
-        }
-        if (dir == 'NNE' || dir == 'NE' || dir == 'ENE') {
-          return 'transform: rotate(45deg)'
-        }
-        if (dir == 'NNW' || dir == 'NW' || dir == 'WNW') {
-          return 'transform: rotate(-45deg)'
-        }
-         if (dir == 'S') {
-          return 'transform: rotate(180deg)'
-        }
-        if (dir == 'SSE' || dir == 'SE' || dir == 'ESE') {
-          return 'transform: rotate(135deg)'
-        }
-        if (dir == 'SSW' || dir == 'SW' || dir == 'WSW') {
-          return 'transform: rotate(-135deg)'
-        }
-        if (dir == 'E') {
-          return 'transform: rotate(90deg)'
-        }
-         if (dir == 'W') {
-          return 'transform: rotate(-90deg)'
-        }
-      },
-        
     }
 	}
 </script>
 
 <style lang="sass" scoped>
-@import "@/styles/variables.sass"
 
 .main-text
   font-size: $medium
@@ -168,8 +107,6 @@ import HourForecastCarousel from '@/components/HourForecastCarousel';
   font-size: $small
   border-radius: $default
   background-color: $main
-
-  &__location
 
   &__current
     display: flex

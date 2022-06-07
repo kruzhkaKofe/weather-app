@@ -9,7 +9,6 @@
 </script>
 
 <style lang="sass" scoped>
-@import "@/styles/variables.sass"
 
 .facts-card
 	width: 700px

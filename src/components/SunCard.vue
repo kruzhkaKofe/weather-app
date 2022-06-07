@@ -24,14 +24,14 @@
 				<div class="sun-card__sunrise-sunset-icon"></div>
 				<div class="sun-card__day-duration">
 					<h3 class="sun-card__day-duration-label" aria-label="Световой день">Световой день</h3>
-					<div class="sun-card__day-duration-value"> {{ daylongHours }} ч {{ daylongMinutes }} мин</div>
+					<div class="sun-card__day-duration-value"> {{ daylongTime }}</div>
 				</div>
 				<div class="sun-card__sunrise-sunset-info-wrapper">
 					<div class="sun-card__sunrise-sunset-info sun-card__sunrise-sunset-info-rise-time">
-						<p><strong>{{ sunriseCut }}</strong></p>
+						<p><strong>{{ sunriseTime }}</strong></p>
 					</div>
 					<div class="sun-card__sunrise-sunset-info sun-card__sunrise-sunset-info-set-time">
-						<p><strong>{{ sunsetCut }}</strong></p>
+						<p><strong>{{ sunsetTime }}</strong></p>
 					</div>
 				</div>
 			</div>
@@ -45,6 +45,8 @@
 </template>
 
 <script>
+import { moonPhases, indexUV, daylong } from 	'@/plugins/celestialBody'
+
 	export default {
 		props: {
 			card: {
@@ -53,7 +55,7 @@
 			}
 		},
 
-		computed: {
+		computed: {			
 			sunrise() {
 				return this.card.forecast.forecastday[0].astro.sunrise
 			},
@@ -62,124 +64,36 @@
 				return this.card.forecast.forecastday[0].astro.sunset
 			},
 
-			sunriseCut() {
-				return this.sunrise.split('').slice(0, 5).join('')
+			sunriseTime() {
+				return daylong(this.sunrise, this.sunset)[0]
 			},
 
-			sunsetCut() {
-				let fullTime = this.sunset.split('')
-				let timeHours = this.sunset.split('').slice(0, 2).join('')
-				if (this.sunset.split('').slice(-2, -1).join('') === 'P') {
-					timeHours = +timeHours + 12
-					fullTime.splice(0, 2, timeHours)
-				}
-				return fullTime.slice(0, 5).join('')
+			sunsetTime() {
+				return daylong(this.sunrise, this.sunset)[1]
 			},
 
-			daylongHours() {
-				const sunriseHours = this.sunrise.split('').slice(0, 2).join('')
-				const sunsetHours = this.sunset.split('').slice(0, 2).join('')
-				const riseMin = this.sunrise.split('').slice(3, 5).join('')
-				const setMin = this.sunset.split('').slice(3, 5).join('')
-				return +setMin >= +riseMin ? ((+sunsetHours + 12) - +sunriseHours).toString() : ((+sunsetHours + 11) - +sunriseHours).toString()
+			daylongTime() {
+				return daylong(this.sunrise, this.sunset)[2]
 			},
 
-			daylongMinutes() {
-				const sunriseMinutes = this.sunrise.split('').slice(3, 5).join('')
-				const sunsetMinutes = this.sunset.split('').slice(3, 5).join('')
-				let daylongM = 0
-				if (sunriseMinutes > sunsetMinutes) {
-					daylongM = 60 + (+sunsetMinutes - +sunriseMinutes)
-				} else {
-					daylongM = +sunsetMinutes - +sunriseMinutes
-				}
-				return daylongM.toString()
+			phaseName() {
+				return this.card.forecast.forecastday[0].astro.moon_phase
 			},
 
 			moonPhase() {
-				switch(this.card.forecast.forecastday[0].astro.moon_phase) {
-					case 'New Moon':
-						return 'Новолуние';
-					case 'Waxing Crescent':
-						return 'Растущий месяц';
-					case 'First Quarter':
-						return 'Первая четверть';
-					case 'Waxing Gibbous':
-						return 'Растущая луна';
-					case 'Full Moon':
-						return 'Полнолуние';
-					case 'Waning Gibbous':
-						return 'Убывающая луна';
-					case 'Third Quarter':
-						return 'Последняя четверть';
-					case 'Waning Crescent':
-						return 'Убывающий месяц';
-				}
-			},
-
-			moonBackground() {
-				switch(this.card.forecast.forecastday[0].astro.moon_phase) {
-					case 'New Moon':
-						return 'background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTQiIGN5PSIxNCIgcj0iMTQiIGZpbGw9IiM1MzVENzQiLz48L3N2Zz4=")'
-					case 'Waxing Crescent':
-						return 'background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTQiIGN5PSIxNCIgcj0iMTQiIHRyYW5zZm9ybT0icm90YXRlKC0xODAgMTQgMTQpIiBmaWxsPSIjRENEQ0RDIi8+PG1hc2sgaWQ9ImEiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjAiIHk9IjAiIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCI+PGNpcmNsZSBjeD0iMTQiIGN5PSIxNCIgcj0iMTQiIHRyYW5zZm9ybT0icm90YXRlKC0xODAgMTQgMTQpIiBmaWxsPSIjOUU5RkE3Ii8+PC9tYXNrPjxnIG1hc2s9InVybCgjYSkiIGZpbGw9IiNCM0FFQUUiPjxwYXRoIG9wYWNpdHk9Ii42IiBkPSJNMjQuNTQxIDEwLjM1MWMxLjA4IDEuMTc4IDEuODU3IDIuODg1LjczNyA0LjAyNS0xLjE0NSAxLjE2NS0zLjIxNy0uMjAzLTQuMTAzLS44MTYtLjgwNC0uNTU3LTIuMjEtMS45Mi0xLjk3My0zLjUyNS4yMzctMS42MDQgMy45MjgtMS4yMjMgNS4zNC4zMTZ6bS04Ljk4MyAxLjY4OWMxLjUwNi4yIDIuMjQyIDIuMTI0IDEuMTc4IDIuNjY2LS44NjEuNDQtMi4yNSAxLjk0Mi0zLjQ4NCAxLjIzNC0xLjQxLS44MDctMS4yMy0xLjg3Ni0uNjItMi42MzcuNjg1LS44NTcgMS4zNi0xLjQ3IDIuOTI2LTEuMjYyeiIvPjxwYXRoIG9wYWNpdHk9Ii42IiBkPSJNMTcuNjgyIDIzLjM5MmMtMS43NzMuNjI0IDEuMDc2IDMuMDU0LS41MyA0LjIwMy0yLjI3IDEuNjIzLTYuMjYgMS42MTctOC45MjMtLjAwMi0yLjQ5NC0xLjUxNy01LjQyOS0zLjE4MS01LjYxNS02LjMxLS4xMzItMi4yMTItLjM2OS00LjUxMSAyLjcyNi01LjI4NCAxLjc5Ny0uNDQ5IDUuMzU1IDIuMTgxIDYuMjg1IDIuNzEgMi40MSAxLjM3MiAzLjM2NC0xLjAzMyA1LjUyNy0yLjE5NSAxLjY3LS44OTggNS45NzcuNDE1IDUuNzggMy4yNTQtLjE4MiAyLjYxNC0yLjkzNyAyLjgwOC01LjI1IDMuNjIzek01LjExNCAxMi45NjNjLS42MDUgMS43MSAxLjM0MiAxLjg5NCAyLjg2NyAxLjg0LjI4LS40NDYuODQ3LTEuNTI1Ljg2OC0yLjI2MS4wMjYtLjkyLS4zNDItMS45Mi0xLjYzLTIuMTU3LTEuMjktLjIzNy0xLjUuODY4LTIuMTA1IDIuNTc4em04LjIzMS0yLjMzNmMtMS4wMDUuNzE4LTIuOTIxIDMuMzA4LTMuMzQ1IDEuMjM5LS40MjMtMi4wNy0yLjMwMi0yLjY4Ni0yLjU5Ni0zLjE5LS4zNjktLjYzMi44NDEtMS43OSAyLjAyNS0zIDEuMTgzLTEuMjA5IDMuNzYtMy4wMjQgNi40MTYtMi43ODcgMi42NTcuMjM2IDEuOTA1IDMuMi42MSA0Ljg1LS42MzQuODA4LTIuMTI3IDIuMTg3LTMuMTEgMi44ODh6bS03LjY2OS0zLjY3Yy40MDctLjg5NCAxLjA3LTIuMzcgMi4yMTMtMy45MTEuNjg0LS45MjMtLjkyNy0xLjQwOS0xLjU2NS0xLjExNi0uNDguMjItMS41ODkgMS4yNi0yLjAyNyAxLjY4OWwtLjAwOC4wMDhjLS40NTMuNDQzLTIuMzQ1IDIuMjk0LTIuMDUxIDIuNyAxLjA0NCAxLjQ0NSAzLjA5MSAxLjM5IDMuNDM4LjYzeiIvPjwvZz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE2LjQ5NyAyNy43NzlhMTkuOTMyIDE5LjkzMiAwIDAwNS41MDctMTMuNzgzQTE5LjkzMyAxOS45MzMgMCAwMDE2LjUwNi4yMjMgMTQuMDgzIDE0LjA4MyAwIDAwMTQuMDA0IDBjLTcuNzMyIDAtMTQgNi4yNjgtMTQgMTRzNi4yNjggMTQgMTQgMTRjLjg1IDAgMS42ODQtLjA3NiAyLjQ5My0uMjIxeiIgZmlsbD0iIzUzNUQ3NCIvPjwvc3ZnPg==")'
-					case 'First Quarter':
-						return 'background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTQiIGN5PSIxNCIgcj0iMTQiIHRyYW5zZm9ybT0icm90YXRlKC0xODAgMTQgMTQpIiBmaWxsPSIjRENEQ0RDIi8+PG1hc2sgaWQ9ImEiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjAiIHk9IjAiIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCI+PGNpcmNsZSBjeD0iMTQiIGN5PSIxNCIgcj0iMTQiIHRyYW5zZm9ybT0icm90YXRlKC0xODAgMTQgMTQpIiBmaWxsPSIjOUU5RkE3Ii8+PC9tYXNrPjxnIG1hc2s9InVybCgjYSkiIGZpbGw9IiNCM0FFQUUiPjxwYXRoIG9wYWNpdHk9Ii42IiBkPSJNMjQuNTQxIDEwLjM1MWMxLjA4IDEuMTc4IDEuODU3IDIuODg1LjczNyA0LjAyNS0xLjE0NSAxLjE2NS0zLjIxNy0uMjAzLTQuMTAzLS44MTYtLjgwNC0uNTU3LTIuMjEtMS45Mi0xLjk3My0zLjUyNS4yMzctMS42MDQgMy45MjgtMS4yMjMgNS4zNC4zMTZ6bS04Ljk4MyAxLjY4OWMxLjUwNi4yIDIuMjQyIDIuMTI0IDEuMTc4IDIuNjY2LS44NjEuNDQtMi4yNSAxLjk0Mi0zLjQ4NCAxLjIzNC0xLjQxLS44MDctMS4yMy0xLjg3Ni0uNjItMi42MzcuNjg1LS44NTcgMS4zNi0xLjQ3IDIuOTI2LTEuMjYyeiIvPjxwYXRoIG9wYWNpdHk9Ii42IiBkPSJNMTcuNjgyIDIzLjM5MmMtMS43NzMuNjI0IDEuMDc2IDMuMDU0LS41MyA0LjIwMy0yLjI3IDEuNjIzLTYuMjYgMS42MTctOC45MjMtLjAwMi0yLjQ5NC0xLjUxNy01LjQyOS0zLjE4MS01LjYxNS02LjMxLS4xMzItMi4yMTItLjM2OS00LjUxMSAyLjcyNi01LjI4NCAxLjc5Ny0uNDQ5IDUuMzU1IDIuMTgxIDYuMjg1IDIuNzEgMi40MSAxLjM3MiAzLjM2NC0xLjAzMyA1LjUyNy0yLjE5NSAxLjY3LS44OTggNS45NzcuNDE1IDUuNzggMy4yNTQtLjE4MiAyLjYxNC0yLjkzNyAyLjgwOC01LjI1IDMuNjIzek01LjExNCAxMi45NjNjLS42MDUgMS43MSAxLjM0MiAxLjg5NCAyLjg2NyAxLjg0LjI4LS40NDYuODQ3LTEuNTI1Ljg2OC0yLjI2MS4wMjYtLjkyLS4zNDItMS45Mi0xLjYzLTIuMTU3LTEuMjktLjIzNy0xLjUuODY4LTIuMTA1IDIuNTc4em04LjIzMS0yLjMzNmMtMS4wMDUuNzE4LTIuOTIxIDMuMzA4LTMuMzQ1IDEuMjM5LS40MjMtMi4wNy0yLjMwMi0yLjY4Ni0yLjU5Ni0zLjE5LS4zNjktLjYzMi44NDEtMS43OSAyLjAyNS0zIDEuMTgzLTEuMjA5IDMuNzYtMy4wMjQgNi40MTYtMi43ODcgMi42NTcuMjM2IDEuOTA1IDMuMi42MSA0Ljg1LS42MzQuODA4LTIuMTI3IDIuMTg3LTMuMTEgMi44ODh6bS03LjY2OS0zLjY3Yy40MDctLjg5NCAxLjA3LTIuMzcgMi4yMTMtMy45MTEuNjg0LS45MjMtLjkyNy0xLjQwOS0xLjU2NS0xLjExNi0uNDguMjItMS41ODkgMS4yNi0yLjAyNyAxLjY4OWwtLjAwOC4wMDhjLS40NTMuNDQzLTIuMzQ1IDIuMjk0LTIuMDUxIDIuNyAxLjA0NCAxLjQ0NSAzLjA5MSAxLjM5IDMuNDM4LjYzeiIvPjwvZz48L3N2Zz4=")';
-					case 'Waxing Gibbous':
-						return 'background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTQiIGN5PSIxNCIgcj0iMTQiIHRyYW5zZm9ybT0icm90YXRlKC0xODAgMTQgMTQpIiBmaWxsPSIjRENEQ0RDIi8+PG1hc2sgaWQ9ImEiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjAiIHk9IjAiIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCI+PGNpcmNsZSBjeD0iMTQiIGN5PSIxNCIgcj0iMTQiIHRyYW5zZm9ybT0icm90YXRlKC0xODAgMTQgMTQpIiBmaWxsPSIjOUU5RkE3Ii8+PC9tYXNrPjxnIG1hc2s9InVybCgjYSkiIGZpbGw9IiNCM0FFQUUiPjxwYXRoIG9wYWNpdHk9Ii42IiBkPSJNMjQuNTQxIDEwLjM1MWMxLjA4IDEuMTc4IDEuODU3IDIuODg1LjczNyA0LjAyNS0xLjE0NSAxLjE2NS0zLjIxNy0uMjAzLTQuMTAzLS44MTYtLjgwNC0uNTU3LTIuMjEtMS45Mi0xLjk3My0zLjUyNS4yMzctMS42MDQgMy45MjgtMS4yMjMgNS4zNC4zMTZ6bS04Ljk4MyAxLjY4OWMxLjUwNi4yIDIuMjQyIDIuMTI0IDEuMTc4IDIuNjY2LS44NjEuNDQtMi4yNSAxLjk0Mi0zLjQ4NCAxLjIzNC0xLjQxLS44MDctMS4yMy0xLjg3Ni0uNjItMi42MzcuNjg1LS44NTcgMS4zNi0xLjQ3IDIuOTI2LTEuMjYyeiIvPjxwYXRoIG9wYWNpdHk9Ii42IiBkPSJNMTcuNjgyIDIzLjM5MmMtMS43NzMuNjI0IDEuMDc2IDMuMDU0LS41MyA0LjIwMy0yLjI3IDEuNjIzLTYuMjYgMS42MTctOC45MjMtLjAwMi0yLjQ5NC0xLjUxNy01LjQyOS0zLjE4MS01LjYxNS02LjMxLS4xMzItMi4yMTItLjM2OS00LjUxMSAyLjcyNi01LjI4NCAxLjc5Ny0uNDQ5IDUuMzU1IDIuMTgxIDYuMjg1IDIuNzEgMi40MSAxLjM3MiAzLjM2NC0xLjAzMyA1LjUyNy0yLjE5NSAxLjY3LS44OTggNS45NzcuNDE1IDUuNzggMy4yNTQtLjE4MiAyLjYxNC0yLjkzNyAyLjgwOC01LjI1IDMuNjIzek01LjExNCAxMi45NjNjLS42MDUgMS43MSAxLjM0MiAxLjg5NCAyLjg2NyAxLjg0LjI4LS40NDYuODQ3LTEuNTI1Ljg2OC0yLjI2MS4wMjYtLjkyLS4zNDItMS45Mi0xLjYzLTIuMTU3LTEuMjktLjIzNy0xLjUuODY4LTIuMTA1IDIuNTc4em04LjIzMS0yLjMzNmMtMS4wMDUuNzE4LTIuOTIxIDMuMzA4LTMuMzQ1IDEuMjM5LS40MjMtMi4wNy0yLjMwMi0yLjY4Ni0yLjU5Ni0zLjE5LS4zNjktLjYzMi44NDEtMS43OSAyLjAyNS0zIDEuMTgzLTEuMjA5IDMuNzYtMy4wMjQgNi40MTYtMi43ODcgMi42NTcuMjM2IDEuOTA1IDMuMi42MSA0Ljg1LS42MzQuODA4LTIuMTI4IDIuMTg3LTMuMTEgMi44ODh6bS03LjY2OS0zLjY3Yy40MDctLjg5NCAxLjA3LTIuMzcgMi4yMTMtMy45MTEuNjg0LS45MjMtLjkyNy0xLjQwOS0xLjU2NS0xLjExNi0uNDguMjItMS41ODkgMS4yNi0yLjAyNyAxLjY4OWwtLjAwOC4wMDhjLS40NTMuNDQzLTIuMzQ1IDIuMjk0LTIuMDUxIDIuNyAxLjA0NCAxLjQ0NSAzLjA5MSAxLjM5IDMuNDM4LjYzeiIvPjwvZz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTEzLjk5IDBDNi4yNjIgMCAwIDYuMjY4IDAgMTRjMCA2LjkzNyA1LjA0MiAxMi42OTYgMTEuNjU4IDEzLjgwNmExOS45NTUgMTkuOTU1IDAgMDEtNC41NDYtMTIuN0M3LjExMiA5LjA5MiA5Ljc3MiAzLjY5MiAxMy45OSAweiIgZmlsbD0iIzUzNUQ3NCIvPjwvc3ZnPg==")'
-					case 'Full Moon':
-						return 'background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTQiIGN5PSIxNCIgcj0iMTQiIHRyYW5zZm9ybT0icm90YXRlKC0xODAgMTQgMTQpIiBmaWxsPSIjRENEQ0RDIi8+PG1hc2sgaWQ9ImEiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjAiIHk9IjAiIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCI+PGNpcmNsZSBjeD0iMTQiIGN5PSIxNCIgcj0iMTQiIHRyYW5zZm9ybT0icm90YXRlKC0xODAgMTQgMTQpIiBmaWxsPSIjOUU5RkE3Ii8+PC9tYXNrPjxnIG1hc2s9InVybCgjYSkiIGZpbGw9IiNCM0FFQUUiPjxwYXRoIG9wYWNpdHk9Ii42IiBkPSJNMjQuNTQxIDEwLjM1MWMxLjA4IDEuMTc4IDEuODU3IDIuODg1LjczNyA0LjAyNS0xLjE0NSAxLjE2NS0zLjIxNy0uMjAzLTQuMTAzLS44MTYtLjgwNC0uNTU3LTIuMjEtMS45Mi0xLjk3My0zLjUyNS4yMzctMS42MDQgMy45MjgtMS4yMjMgNS4zNC4zMTZ6bS04Ljk4MyAxLjY4OWMxLjUwNi4yIDIuMjQyIDIuMTI0IDEuMTc4IDIuNjY2LS44NjEuNDQtMi4yNSAxLjk0Mi0zLjQ4NCAxLjIzNC0xLjQxLS44MDctMS4yMy0xLjg3Ni0uNjItMi42MzcuNjg1LS44NTcgMS4zNi0xLjQ3IDIuOTI2LTEuMjYyeiIvPjxwYXRoIG9wYWNpdHk9Ii42IiBkPSJNMTcuNjgyIDIzLjM5MmMtMS43NzMuNjI0IDEuMDc2IDMuMDU0LS41MyA0LjIwMy0yLjI3IDEuNjIzLTYuMjYgMS42MTctOC45MjMtLjAwMi0yLjQ5NC0xLjUxNy01LjQyOS0zLjE4MS01LjYxNS02LjMxLS4xMzItMi4yMTItLjM2OS00LjUxMSAyLjcyNi01LjI4NCAxLjc5Ny0uNDQ5IDUuMzU1IDIuMTgxIDYuMjg1IDIuNzEgMi40MSAxLjM3MiAzLjM2NC0xLjAzMyA1LjUyNy0yLjE5NSAxLjY3LS44OTggNS45NzcuNDE1IDUuNzggMy4yNTQtLjE4MiAyLjYxNC0yLjkzNyAyLjgwOC01LjI1IDMuNjIzek01LjExNCAxMi45NjNjLS42MDUgMS43MSAxLjM0MiAxLjg5NCAyLjg2NyAxLjg0LjI4LS40NDYuODQ3LTEuNTI1Ljg2OC0yLjI2MS4wMjYtLjkyLS4zNDItMS45Mi0xLjYzLTIuMTU3LTEuMjktLjIzNy0xLjUuODY4LTIuMTA1IDIuNTc4em04LjIzMS0yLjMzNmMtMS4wMDUuNzE4LTIuOTIxIDMuMzA4LTMuMzQ1IDEuMjM5LS40MjMtMi4wNy0yLjMwMi0yLjY4Ni0yLjU5Ni0zLjE5LS4zNjktLjYzMi44NDEtMS43OSAyLjAyNS0zIDEuMTgzLTEuMjA5IDMuNzYtMy4wMjQgNi40MTYtMi43ODcgMi42NTcuMjM2IDEuOTA1IDMuMi42MSA0Ljg1LS42MzQuODA4LTIuMTI3IDIuMTg3LTMuMTEgMi44ODh6bS03LjY2OS0zLjY3Yy40MDctLjg5NCAxLjA3LTIuMzcgMi4yMTMtMy45MTEuNjg0LS45MjMtLjkyNy0xLjQwOS0xLjU2NS0xLjExNi0uNDguMjItMS41ODkgMS4yNi0yLjAyNyAxLjY4OWwtLjAwOC4wMDhjLS40NTMuNDQzLTIuMzQ1IDIuMjk0LTIuMDUxIDIuNyAxLjA0NCAxLjQ0NSAzLjA5MSAxLjM5IDMuNDM4LjYzeiIvPjwvZz48L3N2Zz4=")';
-					case 'Waning Gibbous':
-						return 'background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTQiIGN5PSIxNCIgcj0iMTQiIHRyYW5zZm9ybT0icm90YXRlKC0xODAgMTQgMTQpIiBmaWxsPSIjRENEQ0RDIi8+PG1hc2sgaWQ9ImEiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjAiIHk9IjAiIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCI+PGNpcmNsZSBjeD0iMTQiIGN5PSIxNCIgcj0iMTQiIHRyYW5zZm9ybT0icm90YXRlKC0xODAgMTQgMTQpIiBmaWxsPSIjOUU5RkE3Ii8+PC9tYXNrPjxnIG1hc2s9InVybCgjYSkiIGZpbGw9IiNCM0FFQUUiPjxwYXRoIG9wYWNpdHk9Ii42IiBkPSJNMjQuNTQxIDEwLjM1MWMxLjA4IDEuMTc4IDEuODU3IDIuODg1LjczNyA0LjAyNS0xLjE0NSAxLjE2NS0zLjIxNy0uMjAzLTQuMTAzLS44MTYtLjgwNC0uNTU3LTIuMjEtMS45Mi0xLjk3My0zLjUyNS4yMzctMS42MDQgMy45MjgtMS4yMjMgNS4zNC4zMTZ6bS04Ljk4MyAxLjY4OWMxLjUwNi4yIDIuMjQyIDIuMTI0IDEuMTc4IDIuNjY2LS44NjEuNDQtMi4yNSAxLjk0Mi0zLjQ4NCAxLjIzNC0xLjQxLS44MDctMS4yMy0xLjg3Ni0uNjItMi42MzcuNjg1LS44NTcgMS4zNi0xLjQ3IDIuOTI2LTEuMjYyeiIvPjxwYXRoIG9wYWNpdHk9Ii42IiBkPSJNMTcuNjgyIDIzLjM5MmMtMS43NzMuNjI0IDEuMDc2IDMuMDU0LS41MyA0LjIwMy0yLjI3IDEuNjIzLTYuMjYgMS42MTctOC45MjMtLjAwMi0yLjQ5NC0xLjUxNy01LjQyOS0zLjE4MS01LjYxNS02LjMxLS4xMzItMi4yMTItLjM2OS00LjUxMSAyLjcyNi01LjI4NCAxLjc5Ny0uNDQ5IDUuMzU1IDIuMTgxIDYuMjg1IDIuNzEgMi40MSAxLjM3MiAzLjM2NC0xLjAzMyA1LjUyNy0yLjE5NSAxLjY3LS44OTggNS45NzcuNDE1IDUuNzggMy4yNTQtLjE4MiAyLjYxNC0yLjkzNyAyLjgwOC01LjI1IDMuNjIzek01LjExNCAxMi45NjNjLS42MDUgMS43MSAxLjM0MiAxLjg5NCAyLjg2NyAxLjg0LjI4LS40NDYuODQ3LTEuNTI1Ljg2OC0yLjI2MS4wMjYtLjkyLS4zNDItMS45Mi0xLjYzLTIuMTU3LTEuMjktLjIzNy0xLjUuODY4LTIuMTA1IDIuNTc4em04LjIzMS0yLjMzNmMtMS4wMDUuNzE4LTIuOTIxIDMuMzA4LTMuMzQ1IDEuMjM5LS40MjMtMi4wNy0yLjMwMi0yLjY4Ni0yLjU5Ni0zLjE5LS4zNjktLjYzMi44NDEtMS43OSAyLjAyNS0zIDEuMTgzLTEuMjA5IDMuNzYtMy4wMjQgNi40MTYtMi43ODcgMi42NTcuMjM2IDEuOTA1IDMuMi42MSA0Ljg1LS42MzQuODA4LTIuMTI3IDIuMTg3LTMuMTEgMi44ODh6bS03LjY2OS0zLjY3Yy40MDctLjg5NCAxLjA3LTIuMzcgMi4yMTMtMy45MTEuNjg0LS45MjMtLjkyNy0xLjQwOS0xLjU2NS0xLjExNi0uNDguMjItMS41ODkgMS4yNi0yLjAyNyAxLjY4OWwtLjAwOC4wMDhjLS40NTMuNDQzLTIuMzQ1IDIuMjk0LTIuMDUxIDIuNyAxLjA0NCAxLjQ0NSAzLjA5MSAxLjM5IDMuNDM4LjYzeiIvPjwvZz48L3N2Zz4=")';
-					case 'Third Quarter':
-						return 'background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTQiIGN5PSIxNCIgcj0iMTQiIHRyYW5zZm9ybT0icm90YXRlKC0xODAgMTQgMTQpIiBmaWxsPSIjRENEQ0RDIi8+PG1hc2sgaWQ9ImEiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjAiIHk9IjAiIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCI+PGNpcmNsZSBjeD0iMTQiIGN5PSIxNCIgcj0iMTQiIHRyYW5zZm9ybT0icm90YXRlKC0xODAgMTQgMTQpIiBmaWxsPSIjOUU5RkE3Ii8+PC9tYXNrPjxnIG1hc2s9InVybCgjYSkiIGZpbGw9IiNCM0FFQUUiPjxwYXRoIG9wYWNpdHk9Ii42IiBkPSJNMjQuNTQxIDEwLjM1MWMxLjA4IDEuMTc4IDEuODU3IDIuODg1LjczNyA0LjAyNS0xLjE0NSAxLjE2NS0zLjIxNy0uMjAzLTQuMTAzLS44MTYtLjgwNC0uNTU3LTIuMjEtMS45Mi0xLjk3My0zLjUyNS4yMzctMS42MDQgMy45MjgtMS4yMjMgNS4zNC4zMTZ6bS04Ljk4MyAxLjY4OWMxLjUwNi4yIDIuMjQyIDIuMTI0IDEuMTc4IDIuNjY2LS44NjEuNDQtMi4yNSAxLjk0Mi0zLjQ4NCAxLjIzNC0xLjQxLS44MDctMS4yMy0xLjg3Ni0uNjItMi42MzcuNjg1LS44NTcgMS4zNi0xLjQ3IDIuOTI2LTEuMjYyeiIvPjxwYXRoIG9wYWNpdHk9Ii42IiBkPSJNMTcuNjgyIDIzLjM5MmMtMS43NzMuNjI0IDEuMDc2IDMuMDU0LS41MyA0LjIwMy0yLjI3IDEuNjIzLTYuMjYgMS42MTctOC45MjMtLjAwMi0yLjQ5NC0xLjUxNy01LjQyOS0zLjE4MS01LjYxNS02LjMxLS4xMzItMi4yMTItLjM2OS00LjUxMSAyLjcyNi01LjI4NCAxLjc5Ny0uNDQ5IDUuMzU1IDIuMTgxIDYuMjg1IDIuNzEgMi40MSAxLjM3MiAzLjM2NC0xLjAzMyA1LjUyNy0yLjE5NSAxLjY3LS44OTggNS45NzcuNDE1IDUuNzggMy4yNTQtLjE4MiAyLjYxNC0yLjkzNyAyLjgwOC01LjI1IDMuNjIzek01LjExNCAxMi45NjNjLS42MDUgMS43MSAxLjM0MiAxLjg5NCAyLjg2NyAxLjg0LjI4LS40NDYuODQ3LTEuNTI1Ljg2OC0yLjI2MS4wMjYtLjkyLS4zNDItMS45Mi0xLjYzLTIuMTU3LTEuMjktLjIzNy0xLjUuODY4LTIuMTA1IDIuNTc4em04LjIzMS0yLjMzNmMtMS4wMDUuNzE4LTIuOTIxIDMuMzA4LTMuMzQ1IDEuMjM5LS40MjMtMi4wNy0yLjMwMi0yLjY4Ni0yLjU5Ni0zLjE5LS4zNjktLjYzMi44NDEtMS43OSAyLjAyNS0zIDEuMTgzLTEuMjA5IDMuNzYtMy4wMjQgNi40MTYtMi43ODcgMi42NTcuMjM2IDEuOTA1IDMuMi42MSA0Ljg1LS42MzQuODA4LTIuMTI3IDIuMTg3LTMuMTEgMi44ODh6bS03LjY2OS0zLjY3Yy40MDctLjg5NCAxLjA3LTIuMzcgMi4yMTMtMy45MTEuNjg0LS45MjMtLjkyNy0xLjQwOS0xLjU2NS0xLjExNi0uNDguMjItMS41ODkgMS4yNi0yLjAyNyAxLjY4OWwtLjAwOC4wMDhjLS40NTMuNDQzLTIuMzQ1IDIuMjk0LTIuMDUxIDIuNyAxLjA0NCAxLjQ0NSAzLjA5MSAxLjM5IDMuNDM4LjYzeiIvPjwvZz48L3N2Zz4=")';
-					case 'Waning Crescent':
-						return 'background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTQiIGN5PSIxNCIgcj0iMTQiIHRyYW5zZm9ybT0icm90YXRlKC0xODAgMTQgMTQpIiBmaWxsPSIjRENEQ0RDIi8+PG1hc2sgaWQ9ImEiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjAiIHk9IjAiIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCI+PGNpcmNsZSBjeD0iMTQiIGN5PSIxNCIgcj0iMTQiIHRyYW5zZm9ybT0icm90YXRlKC0xODAgMTQgMTQpIiBmaWxsPSIjOUU5RkE3Ii8+PC9tYXNrPjxnIG1hc2s9InVybCgjYSkiIGZpbGw9IiNCM0FFQUUiPjxwYXRoIG9wYWNpdHk9Ii42IiBkPSJNMjQuNTQxIDEwLjM1MWMxLjA4IDEuMTc4IDEuODU3IDIuODg1LjczNyA0LjAyNS0xLjE0NSAxLjE2NS0zLjIxNy0uMjAzLTQuMTAzLS44MTYtLjgwNC0uNTU3LTIuMjEtMS45Mi0xLjk3My0zLjUyNS4yMzctMS42MDQgMy45MjgtMS4yMjMgNS4zNC4zMTZ6bS04Ljk4MyAxLjY4OWMxLjUwNi4yIDIuMjQyIDIuMTI0IDEuMTc4IDIuNjY2LS44NjEuNDQtMi4yNSAxLjk0Mi0zLjQ4NCAxLjIzNC0xLjQxLS44MDctMS4yMy0xLjg3Ni0uNjItMi42MzcuNjg1LS44NTcgMS4zNi0xLjQ3IDIuOTI2LTEuMjYyeiIvPjxwYXRoIG9wYWNpdHk9Ii42IiBkPSJNMTcuNjgyIDIzLjM5MmMtMS43NzMuNjI0IDEuMDc2IDMuMDU0LS41MyA0LjIwMy0yLjI3IDEuNjIzLTYuMjYgMS42MTctOC45MjMtLjAwMi0yLjQ5NC0xLjUxNy01LjQyOS0zLjE4MS01LjYxNS02LjMxLS4xMzItMi4yMTItLjM2OS00LjUxMSAyLjcyNi01LjI4NCAxLjc5Ny0uNDQ5IDUuMzU1IDIuMTgxIDYuMjg1IDIuNzEgMi40MSAxLjM3MiAzLjM2NC0xLjAzMyA1LjUyNy0yLjE5NSAxLjY3LS44OTggNS45NzcuNDE1IDUuNzggMy4yNTQtLjE4MiAyLjYxNC0yLjkzNyAyLjgwOC01LjI1IDMuNjIzek01LjExNCAxMi45NjNjLS42MDUgMS43MSAxLjM0MiAxLjg5NCAyLjg2NyAxLjg0LjI4LS40NDYuODQ3LTEuNTI1Ljg2OC0yLjI2MS4wMjYtLjkyLS4zNDItMS45Mi0xLjYzLTIuMTU3LTEuMjktLjIzNy0xLjUuODY4LTIuMTA1IDIuNTc4em04LjIzMS0yLjMzNmMtMS4wMDUuNzE4LTIuOTIxIDMuMzA4LTMuMzQ1IDEuMjM5LS40MjMtMi4wNy0yLjMwMi0yLjY4Ni0yLjU5Ni0zLjE5LS4zNjktLjYzMi44NDEtMS43OSAyLjAyNS0zIDEuMTgzLTEuMjA5IDMuNzYtMy4wMjQgNi40MTYtMi43ODcgMi42NTcuMjM2IDEuOTA1IDMuMi42MSA0Ljg1LS42MzQuODA4LTIuMTI3IDIuMTg3LTMuMTEgMi44ODh6bS03LjY2OS0zLjY3Yy40MDctLjg5NCAxLjA3LTIuMzcgMi4yMTMtMy45MTEuNjg0LS45MjMtLjkyNy0xLjQwOS0xLjU2NS0xLjExNi0uNDguMjItMS41ODkgMS4yNi0yLjAyNyAxLjY4OWwtLjAwOC4wMDhjLS40NTMuNDQzLTIuMzQ1IDIuMjk0LTIuMDUxIDIuNyAxLjA0NCAxLjQ0NSAzLjA5MSAxLjM5IDMuNDM4LjYzeiIvPjwvZz48L3N2Zz4=")';
-				}
+				return `${moonPhases(this.phaseName)[0]}`
 			},
 
 			orbitRotate() {
-				switch(this.card.forecast.forecastday[0].astro.moon_phase){
-					case 'New Moon':
-						return 'transform: rotateZ(0.0turn)';
-					case 'Waxing Crescent':
-						return 'transform: rotateZ(0.875turn)';
-					case 'First Quarter':
-						return 'transform: rotateZ(0.750turn)';
-					case 'Waxing Gibbous':
-						return 'transform: rotateZ(0.625turn)';
-					case 'Full Moon':
-						return 'transform: rotateZ(0.5turn)';
-					case 'Waning Gibbous':
-						return 'transform: rotateZ(0.375turn)';
-					case 'Third Quarter':
-						return 'transform: rotateZ(0.250turn)';
-					case 'Waning Crescent':
-						return 'transform: rotateZ(0.125turn)';
-				}
+				return `${moonPhases(this.phaseName)[1]}`
+			},
 
+			moonBackground() {
+				return `background-image: url('${moonPhases(this.phaseName)[2]}')`
 			},
 
 			uvIndex() {
-				switch(this.card.forecast.forecastday[0].day.uv) {
-					case 0:
-					case 1:
-					case 2:
-						return 'Низкий УФ-индекс';
-					case 3:
-					case 4:
-					case 5:
-						return 'Умеренный УФ-индекс';
-					case 6:
-					case 7:
-						return 'Высокий УФ-индекс';
-					case 8:
-					case 9:
-					case 10:
-						return 'Очень высокий УФ-индекс';
-					default:
-						return 'Чрезмерный УФ-индекс'
-				}
+				return indexUV(this.card.forecast.forecastday[0].day.uv)
 			},
 		}
 	
@@ -187,7 +101,6 @@
 </script>
 
 <style lang="sass" scoped>
-@import "@/styles/variables.sass"
 
 .sun-card
 	margin-bottom: 40px

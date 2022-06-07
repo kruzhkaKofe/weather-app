@@ -25,7 +25,6 @@
 </script>
 
 <style lang="sass" scoped>
-@import "@/styles/variables.sass"
 
 .breadcrumbs
 	padding: 15px 0

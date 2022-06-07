@@ -71,7 +71,6 @@ import { fromLonLat } from 'ol/proj';
 </script>
 
 <style lang="sass" scoped>
-@import "@/styles/variables.sass"
 
 .map
 	width: 700px
