@@ -65,6 +65,3 @@ export const dayPart = (time) => {
 			return 'Вечером';
 	}
 }
-
-
-

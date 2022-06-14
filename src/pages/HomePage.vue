@@ -21,7 +21,7 @@
 		  <current-card 
 			  :card="card"
 		  />
-		  <!-- <map-card :card="card"/> -->
+		  <map-card :card="card"/>
     </div>
     <day-forecast-carousel
       :card="card"
@@ -49,7 +49,7 @@ import MapCard from '@/components/MapCard'
 import DayForecastCarousel from '@/components/DayForecastCarousel';
 import SunCard from '@/components/SunCard';
 import DayForecast from '@/components/DayForecast';
-import { weatherLoader } from '@/plugins/api.js'
+import { loadWeather } from '@/plugins/api.js'
 import { averageWindSpeed } from '@/plugins/naturalCondition'
 
 export default {
@@ -70,10 +70,21 @@ export default {
     }
   },
 
+  // setup(emit) {
+  //   import { defineEmits, watch, ref } from 'vue'
+  //   const emit = defineEmits('findWeatherInCity')
+  //   const card = fetchWeather(name)
+
+  //   return {
+  //     card
+  //   }
+  // },
+
+
   methods: {  
     async fetchWeather(name)  {
       try {
-        const res = await weatherLoader(name);
+        const res = await loadWeather(name);
         this.card = res.data
         this.card.forecast.forecastday.forEach(day => {
           day.hour.forEach(field => {

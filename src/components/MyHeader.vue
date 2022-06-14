@@ -27,13 +27,15 @@ import SearchForm from '@/components/SearchForm'
 		data() {
 			return {
 				name: '',
+				date: ''
 			}
 		},
 
 		methods: {
-			findWeather(name) {
+			findWeather(name, date) {
 				this.name = name
-				this.$emit('findWeatherInCity', this.name)
+				this.date = date
+				this.$emit('findWeatherInCity', this.name, this.date)
 			}
 		}
 		

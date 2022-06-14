@@ -17,6 +17,7 @@ import TileLayer from 'ol/layer/Tile'
 import OSM from 'ol/source/OSM'
 import 'ol/ol.css'
 import { fromLonLat } from 'ol/proj';
+import {computed, ref, registerRuntimeCompiler} from 'vue'
 
 	export default {
 		props: {
@@ -26,13 +27,6 @@ import { fromLonLat } from 'ol/proj';
 			},
 		},
 
-		data() {
-			return {
-				lat: 0,
-				lon: 0,
-			}
-		},
-		
 		methods: {
 			createMap() {
 				return new Map({
@@ -49,6 +43,10 @@ import { fromLonLat } from 'ol/proj';
 					}),
       	})
 			},
+
+			test() {
+
+			}
 
 		},
 

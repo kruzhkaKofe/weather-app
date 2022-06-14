@@ -32,7 +32,7 @@
 					:class="{
 						'previous': isToday(n) === false,
 						'today': isToday(n),
-						'choised': dateValue === dateTime(n),
+						'choised': date === dateTime(n),
 					}"
 					:datetime="dateTime(n)"
 					@click="findHistory(n)"
@@ -42,7 +42,6 @@
 			</div>
 		</div>
 	</div>
-	<!-- <button @click="dateTimeDefault">test</button> -->
 
 </template>
 
@@ -57,8 +56,7 @@
 
 		data() {
 			return {
-				name: '',
-				dateValue: '',
+				date: '',
 				choisedMonth: null,
 			}
 		},
@@ -81,9 +79,9 @@
 			},
 
 			findHistory(n) {
-				this.dateValue = this.dateTime(n)
-				if (new Date(this.dateValue).getTime() <= this.currentDate) {
-					this.$emit('fetchHistoryOfWeather', this.dateValue, this.name)
+				this.date = this.dateTime(n)
+				if (new Date(this.date).getTime() <= this.currentDate) {
+					this.$emit('fetchHistoryOfWeather', this.card.location.name, this.date)
 				}
 			},
 

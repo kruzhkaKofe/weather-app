@@ -14,19 +14,28 @@
 		data() {
 			return {
 				name: '',
+				date: ''
     	}
   	},
 		
 		methods: {
 			findWeather() {
-				this.$emit('findWeatherInCity', this.name);
+				this.$emit('findWeatherInCity', this.name, this.date);
 				this.name = '';
+			},
+			
+			currentDate(){
+				const year = new Date().getFullYear()
+				const month = (new Date().getMonth() + 1).toString().padStart(2, '0')
+				const date = (new Date().getDate()).toString().padStart(2, '0')
+				return `${date}.${month}.${year}`
 			},
 
 		},
 		
-		mounted() {
+		created() {
 			this.name = 'Izhevsk'
+			this.date = this.currentDate()
 			this.findWeather()
 		}
 
