@@ -39,6 +39,8 @@
 
 <script>
 import HourForecastCarousel from '@/components/HourForecastCarousel';
+import { formatedTemperature, windSpeedFormated } from '@/plugins/naturalCondition'
+import { computed } from 'vue';
 
 	export default {
     components: {
@@ -52,30 +54,27 @@ import HourForecastCarousel from '@/components/HourForecastCarousel';
       },
     },
 
-    computed: {
-			dateSelected(){
-				const year = new Date(this.card.forecast.forecastday[0].date).getFullYear()
-				const month = (new Date(this.card.forecast.forecastday[0].date).getMonth() + 1).toString().padStart(2, '0')
-				const date = (new Date(this.card.forecast.forecastday[0].date).getDate()).toString().padStart(2, '0')
+		setup(props) {
+			const maxTemp = computed(() => formatedTemperature(props.card.forecast.forecastday[0].day.maxtemp_c))
+
+			const minTemp = computed(() => formatedTemperature(props.card.forecast.forecastday[0].day.mintemp_c))
+
+			const maxWindSpeed = computed(() => windSpeedFormated(props.card.forecast.forecastday[0].day.maxwind_kph))
+
+			const dateSelected = computed(() => {
+				const year = new Date(props.card.forecast.forecastday[0].date).getFullYear()
+				const month = (new Date(props.card.forecast.forecastday[0].date).getMonth() + 1).toString().padStart(2, '0')
+				const date = (new Date(props.card.forecast.forecastday[0].date).getDate()).toString().padStart(2, '0')
 				return `${date}.${month}.${year}`
-			},
-
-			maxTemp(){ 
-				const max = Math.round(this.card.forecast.forecastday[0].day.maxtemp_c)
-				return max > 0 ? `+${max}` : `${max}`
-			},
-
-			minTemp(){ 
-				const min = Math.round(this.card.forecast.forecastday[0].day.mintemp_c)
-				return min > 0 ? `+${min}` : `${min}`
-			},
-
-      maxWindSpeed() {
-        return (this.card.forecast.forecastday[0].day.maxwind_kph * 1000 / 3600).toFixed(1)
-      },
-
-    },
-
+			})
+			
+			return {
+				maxTemp,
+				minTemp,
+				maxWindSpeed,
+				dateSelected
+			}
+		},
 	}
 </script>
 

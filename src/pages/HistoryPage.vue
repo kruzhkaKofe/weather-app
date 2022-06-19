@@ -19,6 +19,7 @@ import NavBreadcrumbs from "@/components/NavBreadcrumbs";
 import MyCalendar from "@/components/MyCalendar";
 import HistoryCard from "@/components/HistoryCard";
 import { loadHistory } from "@/plugins/api.js";
+import { ref } from 'vue';
 
 export default {
   components: {
@@ -28,27 +29,30 @@ export default {
     HistoryCard,
   },
 
-  data() {
-    return {
-      card: {},
-    };
-  },
+  setup() {
+    const card = ref({})
 
-  methods: {
-    async fetchHistory(name, date) {
+    const fetchHistory = async (name, date) => {
       try {
         const res = await loadHistory(name, date);
-        this.card = res.data;
-        this.card.forecast.forecastday[0].hour.forEach((h) => {
+        card.value = res.data;
+        card.value.forecast.forecastday[0].hour.forEach((h) => {
           h.time = h.time.split("").slice(11).join("");
           h.temp_c = Math.round(h.temp_c);
         });
-        console.log(this.card);
+        console.log(card.value);
       } catch (e) {
         console.log(e);
       }
-    },
+    }
+
+    return {
+      card,
+      fetchHistory,
+    }
   },
+
+
 };
 </script>
 

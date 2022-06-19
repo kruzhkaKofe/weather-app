@@ -23,4 +23,3 @@ export const loadHistory = (name, date) => axios.request({
 		dt: date
 	},
 })
-

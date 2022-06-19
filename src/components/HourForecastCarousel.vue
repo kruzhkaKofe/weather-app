@@ -8,7 +8,7 @@
 	>
 		<swiper-slide 
 			class="carousel-slide" 
-			v-for="(hour, i) in this.card.forecast.forecastday[0].hour" 
+			v-for="(hour, i) in card.forecast.forecastday[0].hour" 
 			:key="i" 
 		>
 			<p class="carousel-slide__time secondary-text" >

@@ -31,8 +31,8 @@ import MapCard from "@/components/MapCard";
 import DayForecastCarousel from "@/components/DayForecastCarousel";
 import SunCard from "@/components/SunCard";
 import DayForecast from "@/components/DayForecast";
-import { loadWeather } from "@/plugins/api.js";
-import { averageWindSpeed } from "@/plugins/naturalCondition";
+import { loadWeather, fetchWeather } from "@/plugins/api.js";
+import { averageWindSpeed, formatedTemperature } from "@/plugins/naturalCondition";
 import { ref } from "vue";
 
 export default {
@@ -66,18 +66,12 @@ export default {
       }
     };
 
-    function minTemp(dayNum) {
-      const minT = Math.round(
-        card.value.forecast.forecastday[dayNum].day.mintemp_c
-      );
-      return minT > 0 ? `+${minT}` : `${minT}`;
+    const minTemp = (dayNum) => {
+      return formatedTemperature(card.value.forecast.forecastday[dayNum].day.mintemp_c)
     }
 
-    function maxTemp(dayNum) {
-      let maxT = Math.round(
-        card.value.forecast.forecastday[dayNum].day.maxtemp_c
-      );
-      return maxT > 0 ? `+${maxT}` : `${maxT}`;
+    const maxTemp = (dayNum) => {
+      return formatedTemperature(card.value.forecast.forecastday[dayNum].day.maxtemp_c)
     }
 
     function avgWindSpeed(dayNum) {

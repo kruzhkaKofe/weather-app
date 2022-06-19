@@ -58,7 +58,7 @@ import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation } from "swiper";
 import 'swiper/css';
 import "swiper/css/navigation";
-import { windSpeedFormated } from "@/plugins/naturalCondition";
+import { windSpeedFormated, formatedTemperature } from "@/plugins/naturalCondition";
 import { numOfDay, dateOfDay, dayOfDay, monthOfDay } from '@/plugins/forecastDate'
 
 	export default {
@@ -83,16 +83,10 @@ import { numOfDay, dateOfDay, dayOfDay, monthOfDay } from '@/plugins/forecastDat
 		setup() {
 			const maxWindSpeed = (day) => windSpeedFormated(day.day.maxwind_kph)
 
-			const averageTemp = (day) => { 
-				const avg = Math.round(day.day.avgtemp_c)
-        return avg > 0 ? `+${avg}` : `${avg}`
-      }
+			const averageTemp = (day) => formatedTemperature(day.day.avgtemp_c)
 
-      const minTemp = (day) => { 
-				const min = Math.round(day.day.mintemp_c)
-        return min > 0 ? `+${min}` : `${min}`
-      }
-			
+      const minTemp = (day) => formatedTemperature(day.day.mintemp_c)
+
 			return {
 				maxWindSpeed,
 				numOfDay, 

@@ -65,3 +65,8 @@ export const dayPart = (time) => {
 			return 'Вечером';
 	}
 }
+
+export const formatedTemperature = (temp) => {
+	const t = Math.round(temp)
+	return t > 0 ? `+${t}` : `${t}`
+}

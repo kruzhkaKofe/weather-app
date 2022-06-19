@@ -16,21 +16,21 @@
           <h3 class="sun-card__day-duration-label" aria-label="Световой день">
             Световой день
           </h3>
-          <div class="sun-card__day-duration-value">{{ daylongTime }}</div>
+          <div class="sun-card__day-duration-value">{{ dayLong }}</div>
         </div>
         <div class="sun-card__sunrise-sunset-info-wrapper">
           <div
             class="sun-card__sunrise-sunset-info sun-card__sunrise-sunset-info-rise-time"
           >
             <p>
-              <strong>{{ sunriseTime }}</strong>
+              <strong>{{ sunrise }}</strong>
             </p>
           </div>
           <div
             class="sun-card__sunrise-sunset-info sun-card__sunrise-sunset-info-set-time"
           >
             <p>
-              <strong>{{ sunsetTime }}</strong>
+              <strong>{{ sunset }}</strong>
             </p>
           </div>
         </div>
@@ -45,6 +45,7 @@
 
 <script>
 import { moonPhases, indexUV, daylong } from "@/plugins/celestialBody";
+import { computed } from 'vue'
 
 export default {
   props: {
@@ -54,47 +55,27 @@ export default {
     },
   },
 
-  computed: {
-    sunrise() {
-      return this.card.forecast.forecastday[0].astro.sunrise;
-    },
+	setup(props) {
+		const sunrise = computed(() => daylong(props.card.forecast.forecastday[0].astro.sunrise, props.card.forecast.forecastday[0].astro.sunset)[0])
+   	const sunset = computed(() => daylong(props.card.forecast.forecastday[0].astro.sunrise, props.card.forecast.forecastday[0].astro.sunset)[1])
+		const dayLong = computed(() => daylong(props.card.forecast.forecastday[0].astro.sunrise, props.card.forecast.forecastday[0].astro.sunset)[2])
+		const moonPhase = computed(() => moonPhases(props.card.forecast.forecastday[0].astro.moon_phase)[0])
+		const orbitRotate = computed(() => moonPhases(props.card.forecast.forecastday[0].astro.moon_phase)[1])
+		const moonBackground = computed(() => {
+			return `background-image: url('${moonPhases(props.card.forecast.forecastday[0].astro.moon_phase)[2]}')`
+		})
+		const uvIndex = computed(() => indexUV(props.card.forecast.forecastday[0].day.uv))
 
-    sunset() {
-      return this.card.forecast.forecastday[0].astro.sunset;
-    },
-
-    sunriseTime() {
-      return daylong(this.sunrise, this.sunset)[0];
-    },
-
-    sunsetTime() {
-      return daylong(this.sunrise, this.sunset)[1];
-    },
-
-    daylongTime() {
-      return daylong(this.sunrise, this.sunset)[2];
-    },
-
-    phaseName() {
-      return this.card.forecast.forecastday[0].astro.moon_phase;
-    },
-
-    moonPhase() {
-      return `${moonPhases(this.phaseName)[0]}`;
-    },
-
-    orbitRotate() {
-      return `${moonPhases(this.phaseName)[1]}`;
-    },
-
-    moonBackground() {
-      return `background-image: url('${moonPhases(this.phaseName)[2]}')`;
-    },
-
-    uvIndex() {
-      return indexUV(this.card.forecast.forecastday[0].day.uv);
-    },
-  },
+		return {
+			sunrise,
+			sunset,
+			dayLong,
+			moonPhase,
+			orbitRotate,
+			moonBackground,
+			uvIndex
+		}
+	},
 };
 </script>
 

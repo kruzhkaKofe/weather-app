@@ -149,7 +149,7 @@
 
 <script>
 import { moonPhases, indexUV, daylong } from "@/plugins/celestialBody";
-import { windDirection, windSpeedFormated, mmPressure, dayPart, filteredHours } from "@/plugins/naturalCondition";
+import { windDirection, windSpeedFormated, mmPressure, dayPart, filteredHours, formatedTemperature } from "@/plugins/naturalCondition";
 import { week, numOfDay, dateOfDay, dayOfDay, monthOfDay } from "@/plugins/forecastDate";
 
 export default {
@@ -164,22 +164,18 @@ export default {
     const sunrise = (day) => daylong(day.astro.sunrise, day.astro.sunset)[0]
     const sunset = (day) => daylong(day.astro.sunrise, day.astro.sunset)[1]
     const dayLong = (day) => daylong(day.astro.sunrise, day.astro.sunset)[2]
-    const pressure = (hour) => mmPressure(hour.pressure_mb)
     const moonImage = (day) => moonPhases(day.astro.moon_phase)[2]
     const phaseOfMoon = (day) => moonPhases(day.astro.moon_phase)[0]
     const uvIndex = (day) => indexUV(day.day.uv)
+    const pressure = (hour) => mmPressure(hour.pressure_mb)
     const windDirImage = (hour) => windDirection(hour.wind_dir)[0]
     const windDirName = (hour) => windDirection(hour.wind_dir)[1]
+    const feelslikeTemp = (hour) => formatedTemperature(hour.feelslike_c)
 
     const weekendCheck = (day) => {
       if (week[numOfDay(day)] === week[0] || week[numOfDay(day)] === week[6]) {
         return "color: red";
       }
-    };
-
-    const feelslikeTemp = (n) => {
-      const tempFeels = Math.round(n.feelslike_c);
-      return tempFeels > 0 ? `+${tempFeels}` : `${tempFeels}`;
     };
 
     return {
