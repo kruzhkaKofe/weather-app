@@ -1,237 +1,208 @@
 <template>
-	<div 
-		v-if="card.forecast"
-		class="forecast">
-		<article 
-			class="forecast-item"
-			v-for="(day, i) in this.card.forecast.forecastday"
-			:key="i"
-			:id="dateOfDay(day)"
-		>
-			<div 
-				class="forecast-date"
-				:style='weekendCheck(day)'
-			>
-				<p class="forecast-date-num">{{ dateOfDay(day) }}</p> 
-				<p class="forecast-date-month">{{ monthOfDay(day) }}</p>
-				<p class="forecast-date-day">{{ dayOfDay(day) }}</p>
-			</div>
-			<table class="forecast-table">
-				<thead class="forecast-table__head">
-					<tr class="forecast-table__head-row">
-						<th class="forecast-table__head-cell" colspan="3">
-						</th>
-						<th class="forecast-table__head-cell forecast-table__head-cell-pressure">
-							Давление,
-							<br>
-							мм рт. ст.
-						</th>
-						<th class="forecast-table__head-cell forecast-table__head-cell-humidity">
-							Влажность
-						</th>
-						<th class="forecast-table__head-cell forecast-table__head-cell-wind">
-							Ветер, м/с
-						</th> 
-						<th class="forecast-table__head-cell orecast-table__head-cell-feelslike">
-							Ощущается как
-						</th>
-					</tr>
-				</thead>
-				<tbody class="forecast-table__body">
-					<tr 
-						class="forecast-table__body-row"
-						v-for="(n, index) in hourInDay(day)"
-						:key="index"
-					>
-						<th class="forecast-table__body-cell forecast-table__body-cell-daypart">
-							<p class="forecast-table__body-cell--not-bold">{{ partOfDay(n) }}</p>
-							<br>
-							<span v-if="n.temp_c > 0">+{{ n.temp_c }}</span>
-							<span v-else>{{ n.temp_c }}</span>
-						</th>
-						<th class="forecast-table__body-cell forecast-table__body-cell-icon">
-							<img 
-								class="forecast-table__body-cell-icon-img" 
-								:src="n.condition.icon" 
-								alt="condtion"
-							>
-						</th>
-						<th class="forecast-table__body-cell forecast-table__body-cell-condition">
-							{{ n.condition.text }} 
-						</th>
-						<th class="forecast-table__body-cell forecast-table__body-cell-pressure">
-							{{ pressureMercury(n) }}
-						</th>
-						<th class="forecast-table__body-cell forecast-table__body-cell-humidity">
-							{{ n.humidity }}%
-						</th>
-						<th class="forecast-table__body-cell forecast-table__body-cell-wind">
-							{{ windSpeed(n) }} м/с	
-							<img 
-								:style="windDirection(n)[0]"
-								class="forecast-table__body-cell-wind-direction-icon" 
-								src="https://yandex-pogoda.static-storage.net/1nZ7g6572/cfeea7iuq/xXAlVRFcwMYO59kTa1ajgf-3R6jvCcSfAO-X8LZcdEDWPpBr73JmFom9v09-OcLVnIWnfUiCz37yJt1I9ONCalx0gRktQCTnnp95yj8CDx3vDwP1u-jgyywDjnTWENwotn6sv3e_gk55GVMfEp3aLXSJt0XU5sPCDhptaVRzXkqxrNXNHUiwL5JPAWpvDmPNM6fL9QM4QNcE397canA0qNL-uFeLN56auUFzb2axBoGY-d_dxC4nulI-ccEQp8IKkcANOV1UTKOqu61aD8anJcvH9z3DEGSrwGeChKokOPiaCkh_-9OaepXt4_vyGfa1uFEH0fhmny5GmsH9CDdS8oVsMbURGEzPIteJRjOmq1GTh_vBF7ykT4D75mw21KQwWs6Y03Pz2rpNrSMDVtXWHTjBt-nUmic-VpqJQfSb9pqV3PmdgUBQx5aHdZZ3Vpvdxw_jURe4qMuctw7IapwE3J5qWAsbfxL6_TV7O0I16glIJTft8OLnTi4GFcFEd7bGBbQ50clEcCOCF30Gsx5vwRv_G73XdMCH_JcKLBZ05Bhq5jh7oxtSUmXxb-eeVe59hEG3pThiy-qSIn2RdMMG3snMgY2pVDCvjh9Z_vNqZzGH34PFcxTc4_xfPkj2tCj4yiIkt-_P2nqJtYevdiX2PRiNW8Hcpg8uEq4pZWxPGq7lqP01WZjIb77TyX5TtqNRyxsHJQ8IoKM4d8aY2pi4WE6OhMvPG2ZmTfXrB3a1wgEsAaPROJ7vUqIq1bkId8LSsXh9mQWQ4JOKV2VG09J_qQu7S6EfAHSXtI8aENJQHDSiUoiLkwtyQsXFjyNWmcadhBEzLeQGf_4anlXtmJ_SXjkULU0RgHjvKheZJmduVxkDcwtBk8jAF-hzHqjaMFhkKk68P7cPCh75uSvj_oUijSQtk-ngFq-2_oJp5VyDsooprMlttcykky4PmXY3SrsJh89HZRckTIs0s8IIInSMHL7iwD-v78aeTcnvYyIVRo0EdZv5uKKLzuLmYTFUmzqSEexxtY0cAIMGj8V2-4bvbTePd3VH4DxHkIcCnOrUdMDW9pTzb8MG3p0Jo6tOnW6R-B3Lodgy67KWmvF95AsKvrkw0Q0RiPjjBstBZreusykr3w9d6-j8q-THRmQ6SJCc4posY6_rmmJVhWMTdqUSoQTRx01AirNC4gqJDXS_MvJtWOVhCWxU1yo_xRZjhvvRI4PvRfc0RIt876pAulz4sNamPHMjw2qObSXrk3ZhZh2IFT9dhPJvSg4uXf34v6KiCZTNmalQDFvSc-l-88KXJReP-6HLSFRbRGeKlI6cFBje4ghXN3d-4p2Jp2PGcZL5HMVfvUAaf6LOvn3hiONSkmV4YTnxtCybVkORomMyv92Xr1dp48goX_CfOlzuNKhEou7ge__Dgr45QScbpmFinfQF3_Gsqhe2lpZ9JdCbcpLJ1GGdhaAkH5YLffrHLl9BF3PnvTfkkP-075rEmigE4NaSiDMTk-4awZmbl8YFzi1k8RdVZDJjQkKi5SUcNyIaucCBqT3U9CsGzx3qs-LjJfOvR3mbzECjtMtunPasZOSq4hQ_uxu2jhVBT--mbc4BJN1DOeCep6Kahp1teOe6DnVIwaFdqHT3mgdJBoOGK93784N9OzSsT2gPjgx2zHyogtqgd6tLtkJtlQN7vvESCYDh5_W4CpO6BrrR9VhvxvZl4MEdjSCkby6X6ZaHjovRc7fLOeMcNCOwU7KAkqRg2OLuTMM7S9r-mbnbGx6BYomoKbv9dFoA" 
-								alt="Направление ветра"
-							>
-							{{ windDirection(n)[1] }}
-						</th>
-						<th 
-							v-if="feelslikeTemp(n) > 0"
-							class="forecast-table__body-cell forecast-table__body-cell-feelslike"
-						>
-							+{{ feelslikeTemp(n) }}
-						</th>
-						<th 
-							v-else
-							class="forecast-table__body-cell forecast-table__body-cell-feelslike"
-						>
-							{{ feelslikeTemp(n) }}
-						</th>
-					</tr>
-				</tbody>
-			</table>
-			<div class="forecast-right-column">
-				<div class="forecast-right-column__sunrise-sunset">
-					<div class="forecast-right-column__sunrise-sunset-icon"></div>
-					<div class="forecast-right-column__day-duration">
-						<h3 class="forecast-right-column__day-duration-label" aria-label="Световой день">Световой день</h3>
-						<div class="forecast-right-column__day-duration-value">{{ daylongTime(day) }}</div>
-					</div>
-					<div class="forecast-right-column__sunrise-sunset-info-wrapper">
-						<div class="forecast-right-column__sunrise-sunset-info forecast-right-column__sunrise-sunset-info-rise-time">
-							<p><strong>{{ sunriseTime(day) }}</strong></p>
-						</div>
-						<div class="forecast-right-column__sunrise-sunset-info forecast-right-column__sunrise-sunset-info-set-time">
-							<p><strong>{{ sunsetTime(day) }}</strong></p>
-						</div>
-					</div>
-				</div>
-				<div class="forecast-right-column__text-info">
-					<p class="forecast-right-column__text-info-item">
-						<img 
-							:style="'margin-right: 5px'" 
-							:src="moonImage(day)" 
-							alt="фаза луны"
-						> 
-						{{ moonPhase(day) }}
-					</p>
-					<p class="forecast-right-column__text-info-item">{{ uvIndex(day) }}</p>
-				</div>
-			</div>
-		</article>
-	</div>
+  <div v-if="card.forecast" class="forecast">
+    <article
+      class="forecast-item"
+      v-for="(day, i) in card.forecast.forecastday"
+      :key="i"
+      :id="dateOfDay(day)"
+    >
+      <div class="forecast-date" :style="weekendCheck(day)">
+        <p class="forecast-date-num">{{ dateOfDay(day) }}</p>
+        <p class="forecast-date-month">{{ monthOfDay(day) }}</p>
+        <p class="forecast-date-day">{{ dayOfDay(day) }}</p>
+      </div>
+      <table class="forecast-table">
+        <thead class="forecast-table__head">
+          <tr class="forecast-table__head-row">
+            <th class="forecast-table__head-cell" colspan="3"></th>
+            <th
+              class="forecast-table__head-cell forecast-table__head-cell-pressure"
+            >
+              Давление,
+              <br />
+              мм рт. ст.
+            </th>
+            <th
+              class="forecast-table__head-cell forecast-table__head-cell-humidity"
+            >
+              Влажность
+            </th>
+            <th
+              class="forecast-table__head-cell forecast-table__head-cell-wind"
+            >
+              Ветер, м/с
+            </th>
+            <th
+              class="forecast-table__head-cell orecast-table__head-cell-feelslike"
+            >
+              Ощущается как
+            </th>
+          </tr>
+        </thead>
+        <tbody class="forecast-table__body">
+          <tr
+            class="forecast-table__body-row"
+            v-for="(n, index) in filteredHours(day.hour)"
+            :key="index"
+          >
+            <th
+              class="forecast-table__body-cell forecast-table__body-cell-daypart"
+            >
+              <p class="forecast-table__body-cell--not-bold">
+                {{ dayPart(n.time) }}
+              </p>
+              <br />
+              <span>{{ n.temp_c > 0 ? `+${n.temp_c}` : n.temp_c }}</span>
+            </th>
+            <th
+              class="forecast-table__body-cell forecast-table__body-cell-icon"
+            >
+              <img
+                class="forecast-table__body-cell-icon-img"
+                :src="n.condition.icon"
+                alt="condtion"
+              />
+            </th>
+            <th
+              class="forecast-table__body-cell forecast-table__body-cell-condition"
+            >
+              {{ n.condition.text }}
+            </th>
+            <th
+              class="forecast-table__body-cell forecast-table__body-cell-pressure"
+            >
+              {{  pressure(n) }}
+            </th>
+            <th
+              class="forecast-table__body-cell forecast-table__body-cell-humidity"
+            >
+              {{ n.humidity }}%
+            </th>
+            <th
+              class="forecast-table__body-cell forecast-table__body-cell-wind"
+            >
+              {{ windSpeedFormated(n.wind_kph) }} м/с
+              <img
+                :style="windDirImage(n)"
+                class="forecast-table__body-cell-wind-direction-icon"
+                src="https://yandex-pogoda.static-storage.net/1nZ7g6572/cfeea7iuq/xXAlVRFcwMYO59kTa1ajgf-3R6jvCcSfAO-X8LZcdEDWPpBr73JmFom9v09-OcLVnIWnfUiCz37yJt1I9ONCalx0gRktQCTnnp95yj8CDx3vDwP1u-jgyywDjnTWENwotn6sv3e_gk55GVMfEp3aLXSJt0XU5sPCDhptaVRzXkqxrNXNHUiwL5JPAWpvDmPNM6fL9QM4QNcE397canA0qNL-uFeLN56auUFzb2axBoGY-d_dxC4nulI-ccEQp8IKkcANOV1UTKOqu61aD8anJcvH9z3DEGSrwGeChKokOPiaCkh_-9OaepXt4_vyGfa1uFEH0fhmny5GmsH9CDdS8oVsMbURGEzPIteJRjOmq1GTh_vBF7ykT4D75mw21KQwWs6Y03Pz2rpNrSMDVtXWHTjBt-nUmic-VpqJQfSb9pqV3PmdgUBQx5aHdZZ3Vpvdxw_jURe4qMuctw7IapwE3J5qWAsbfxL6_TV7O0I16glIJTft8OLnTi4GFcFEd7bGBbQ50clEcCOCF30Gsx5vwRv_G73XdMCH_JcKLBZ05Bhq5jh7oxtSUmXxb-eeVe59hEG3pThiy-qSIn2RdMMG3snMgY2pVDCvjh9Z_vNqZzGH34PFcxTc4_xfPkj2tCj4yiIkt-_P2nqJtYevdiX2PRiNW8Hcpg8uEq4pZWxPGq7lqP01WZjIb77TyX5TtqNRyxsHJQ8IoKM4d8aY2pi4WE6OhMvPG2ZmTfXrB3a1wgEsAaPROJ7vUqIq1bkId8LSsXh9mQWQ4JOKV2VG09J_qQu7S6EfAHSXtI8aENJQHDSiUoiLkwtyQsXFjyNWmcadhBEzLeQGf_4anlXtmJ_SXjkULU0RgHjvKheZJmduVxkDcwtBk8jAF-hzHqjaMFhkKk68P7cPCh75uSvj_oUijSQtk-ngFq-2_oJp5VyDsooprMlttcykky4PmXY3SrsJh89HZRckTIs0s8IIInSMHL7iwD-v78aeTcnvYyIVRo0EdZv5uKKLzuLmYTFUmzqSEexxtY0cAIMGj8V2-4bvbTePd3VH4DxHkIcCnOrUdMDW9pTzb8MG3p0Jo6tOnW6R-B3Lodgy67KWmvF95AsKvrkw0Q0RiPjjBstBZreusykr3w9d6-j8q-THRmQ6SJCc4posY6_rmmJVhWMTdqUSoQTRx01AirNC4gqJDXS_MvJtWOVhCWxU1yo_xRZjhvvRI4PvRfc0RIt876pAulz4sNamPHMjw2qObSXrk3ZhZh2IFT9dhPJvSg4uXf34v6KiCZTNmalQDFvSc-l-88KXJReP-6HLSFRbRGeKlI6cFBje4ghXN3d-4p2Jp2PGcZL5HMVfvUAaf6LOvn3hiONSkmV4YTnxtCybVkORomMyv92Xr1dp48goX_CfOlzuNKhEou7ge__Dgr45QScbpmFinfQF3_Gsqhe2lpZ9JdCbcpLJ1GGdhaAkH5YLffrHLl9BF3PnvTfkkP-075rEmigE4NaSiDMTk-4awZmbl8YFzi1k8RdVZDJjQkKi5SUcNyIaucCBqT3U9CsGzx3qs-LjJfOvR3mbzECjtMtunPasZOSq4hQ_uxu2jhVBT--mbc4BJN1DOeCep6Kahp1teOe6DnVIwaFdqHT3mgdJBoOGK93784N9OzSsT2gPjgx2zHyogtqgd6tLtkJtlQN7vvESCYDh5_W4CpO6BrrR9VhvxvZl4MEdjSCkby6X6ZaHjovRc7fLOeMcNCOwU7KAkqRg2OLuTMM7S9r-mbnbGx6BYomoKbv9dFoA"
+                alt="Направление ветра"
+              />
+              {{ windDirName(n) }}
+            </th>
+            <th
+              class="forecast-table__body-cell forecast-table__body-cell-feelslike"
+            >
+              {{ feelslikeTemp(n) }}
+            </th>
+          </tr>
+        </tbody>
+      </table>
+      <div class="forecast-right-column">
+        <div class="forecast-right-column__sunrise-sunset">
+          <div class="forecast-right-column__sunrise-sunset-icon"></div>
+          <div class="forecast-right-column__day-duration">
+            <h3
+              class="forecast-right-column__day-duration-label"
+              aria-label="Световой день"
+            >
+              Световой день
+            </h3>
+            <div class="forecast-right-column__day-duration-value">
+              {{ dayLong(day) }}
+            </div>
+          </div>
+          <div class="forecast-right-column__sunrise-sunset-info-wrapper">
+            <div
+              class="forecast-right-column__sunrise-sunset-info forecast-right-column__sunrise-sunset-info-rise-time"
+            >
+              <p>
+                <strong>{{ sunrise(day) }}</strong>
+              </p>
+            </div>
+            <div
+              class="forecast-right-column__sunrise-sunset-info forecast-right-column__sunrise-sunset-info-set-time"
+            >
+              <p>
+                <strong>{{ sunset(day) }}</strong>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="forecast-right-column__text-info">
+          <p class="forecast-right-column__text-info-item">
+            <img
+              :style="'margin-right: 5px'"
+              :src="moonImage(day)"
+              alt="фаза луны"
+            />
+            {{ phaseOfMoon(day) }}
+          </p>
+          <p class="forecast-right-column__text-info-item">
+            {{ uvIndex(day) }}
+          </p>
+        </div>
+      </div>
+    </article>
+  </div>
 </template>
 
-<script> 
-import { moonPhases, indexUV, daylong } from '@/plugins/celestialBody'
-import { windDirection, windSpeedFormated, mmPressure, dayPart, filteredHours } from '@/plugins/naturalCondition'
+<script>
+import { moonPhases, indexUV, daylong } from "@/plugins/celestialBody";
+import { windDirection, windSpeedFormated, mmPressure, dayPart, filteredHours } from "@/plugins/naturalCondition";
+import { week, numOfDay, dateOfDay, dayOfDay, monthOfDay } from "@/plugins/forecastDate";
 
-	export default {
-		props: {
-			card: {
-				type: Object,
-				required: true
-			},
-		},
+export default {
+  props: {
+    card: {
+      type: Object,
+      required: true,
+    },
+  },
 
-		computed: {
-			week() {
-				return ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота']
-			},
+  setup() {
+    const sunrise = (day) => daylong(day.astro.sunrise, day.astro.sunset)[0]
+    const sunset = (day) => daylong(day.astro.sunrise, day.astro.sunset)[1]
+    const dayLong = (day) => daylong(day.astro.sunrise, day.astro.sunset)[2]
+    const pressure = (hour) => mmPressure(hour.pressure_mb)
+    const moonImage = (day) => moonPhases(day.astro.moon_phase)[2]
+    const phaseOfMoon = (day) => moonPhases(day.astro.moon_phase)[0]
+    const uvIndex = (day) => indexUV(day.day.uv)
+    const windDirImage = (hour) => windDirection(hour.wind_dir)[0]
+    const windDirName = (hour) => windDirection(hour.wind_dir)[1]
 
-			month() {
-				return ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря']
-			}
-		},
+    const weekendCheck = (day) => {
+      if (week[numOfDay(day)] === week[0] || week[numOfDay(day)] === week[6]) {
+        return "color: red";
+      }
+    };
 
-		methods: {
-			dateDay(day) {
-				return new Date(day.date)
-			},
+    const feelslikeTemp = (n) => {
+      const tempFeels = Math.round(n.feelslike_c);
+      return tempFeels > 0 ? `+${tempFeels}` : `${tempFeels}`;
+    };
 
-			numOfDay(day) {
-				return this.dateDay(day).getDay()
-			},
-			
-			hourInDay(day){ 
-				return filteredHours(day.hour)
-			},
-
-			dateOfDay(day) {
-				return this.dateDay(day).getDate()
-			},
-
-			dayOfDay(day) {
-				return new Date().getDay() === this.numOfDay(day) ? 'сегодня' : this.week[this.numOfDay(day)]
-			}, 
-
-			weekendCheck(day) {
-				if (this.week[this.numOfDay(day)] === this.week[0] || this.week[this.numOfDay(day)] === this.week[6]) {
-					return 'color: red'
-				}
-			},
-			
-			monthOfDay(day) { 
-				return this.month[this.dateDay(day).getMonth()]
-			},
-
-			sunrise(day) {
-				return day.astro.sunrise
-			},
-
-			sunset(day) {
-				return day.astro.sunset
-			},
-
-			sunriseTime(day) {
-				return daylong(this.sunrise(day), this.sunset(day))[0]
-			},
-
-			sunsetTime(day) {
-				return daylong(this.sunrise(day), this.sunset(day))[1]
-			},
-
-			daylongTime(day) {
-				return daylong(this.sunrise(day), this.sunset(day))[2]
-			},
-
-			phaseName(day) {
-				return day.astro.moon_phase
-			},
-
-			moonPhase(day) {
-				return `${moonPhases(this.phaseName(day))[0]}`
-			},
-
-			moonImage(day) {
-				return moonPhases(this.phaseName(day))[2]
-			},
-
-			uvIndex(day) {
-				return indexUV(day.day.uv)
-			},
-			
-			pressureMercury(n){
-        return mmPressure(n.pressure_mb)
-      },
-
-			windSpeed(n) {
-        return windSpeedFormated(n.wind_kph )
-      },
-
-			windDirection(n) {
-        return windDirection(n.wind_dir)
-			},
-
-			feelslikeTemp(n) {
-				return Math.round(n.feelslike_c)
-			},
-
-			partOfDay(n) {
-				return dayPart(n.time)
-			},
-		},
-	}
+    return {
+      sunrise,
+      sunset,
+      dayLong,
+      pressure,
+      moonImage,
+      phaseOfMoon,
+      uvIndex,
+      windDirImage,
+      windDirName,
+      filteredHours,
+      dateOfDay,
+      dayOfDay,
+      weekendCheck,
+      monthOfDay,
+      windSpeedFormated,
+      feelslikeTemp,
+      dayPart,
+    };
+  },
+};
 </script>
 
 <style lang="sass" scoped>
@@ -265,13 +236,13 @@ import { windDirection, windSpeedFormated, mmPressure, dayPart, filteredHours } 
 			font-size: $large
 			font-weight: bold
 
-	&-table	
+	&-table
 		border-collapse: collapse
 		width: 950px
 		text-align: center
 		vertical-align: middle
 		border-bottom: 2px solid rgba(0, 0, 0, 0.2)
-		
+
 		&__head
 
 			&-cell
@@ -281,7 +252,7 @@ import { windDirection, windSpeedFormated, mmPressure, dayPart, filteredHours } 
 				border-bottom: 2px solid rgba(0, 0, 0, 0.2)
 
 		&__body
-				
+
 			&-cell
 
 				&--not-bold
@@ -291,14 +262,14 @@ import { windDirection, windSpeedFormated, mmPressure, dayPart, filteredHours } 
 				&-daypart
 					text-align: center
 					width: 80px
-					
+
 				&-icon
 					padding-left: 15px
 
-					&-img 
+					&-img
 						@include condition-icon
 
-				&-condition 
+				&-condition
 					width: 260px
 					font-weight: normal
 
@@ -309,7 +280,7 @@ import { windDirection, windSpeedFormated, mmPressure, dayPart, filteredHours } 
 					&-direction-icon
 						@include wind-dir-icon
 						margin-left: 5px
-					
+
 	&-right-column
 		display: flex
 		flex-direction: column
@@ -344,7 +315,7 @@ import { windDirection, windSpeedFormated, mmPressure, dayPart, filteredHours } 
 
 				&-rise-time
 					margin-left: -5px
-					
+
 				&-set-time
 					margin-right: -5px
 
@@ -365,7 +336,7 @@ import { windDirection, windSpeedFormated, mmPressure, dayPart, filteredHours } 
 			&-value
 				font-weight: bold
 				font-size: $small
-		
+
 		&__text-info
 			margin-top: 15px
 			padding: 0 25px 20px
@@ -380,5 +351,4 @@ import { windDirection, windSpeedFormated, mmPressure, dayPart, filteredHours } 
 
 				& + &
 					margin-top: 5px
-
 </style>
