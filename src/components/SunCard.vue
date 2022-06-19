@@ -1,103 +1,101 @@
 <template>
-	<div 
-		v-if="card.location"
-		class="sun-card"
-	>
-		<div class="sun-card__planet">
-			<div class="sun-card__sun-circle"></div>
-			<div class="sun-card__earth">
-				<div class="sun-card__earth-icon"></div>
-			</div>
-			<div 
-				class="sun-card__moon"
-				:style="orbitRotate"
-			>
-				<div 
-					class="sun-card__moon-icon"
-					:style="moonBackground"
-				>
-				</div>
-			</div>
-		</div>
-		<div class="sun-card__info">
-			<div class="sun-card__sunrise-sunset">
-				<div class="sun-card__sunrise-sunset-icon"></div>
-				<div class="sun-card__day-duration">
-					<h3 class="sun-card__day-duration-label" aria-label="Световой день">Световой день</h3>
-					<div class="sun-card__day-duration-value"> {{ daylongTime }}</div>
-				</div>
-				<div class="sun-card__sunrise-sunset-info-wrapper">
-					<div class="sun-card__sunrise-sunset-info sun-card__sunrise-sunset-info-rise-time">
-						<p><strong>{{ sunriseTime }}</strong></p>
-					</div>
-					<div class="sun-card__sunrise-sunset-info sun-card__sunrise-sunset-info-set-time">
-						<p><strong>{{ sunsetTime }}</strong></p>
-					</div>
-				</div>
-			</div>
-			<div class="sun-card__text-info">
-				<p class="sun-card__text-info-item">{{ moonPhase }}</p>
-				<p class="sun-card__text-info-item">{{ uvIndex }}</p>
-			</div>
-		</div>
-	</div>
-
+  <div v-if="card.location" class="sun-card">
+    <div class="sun-card__planet">
+      <div class="sun-card__sun-circle"></div>
+      <div class="sun-card__earth">
+        <div class="sun-card__earth-icon"></div>
+      </div>
+      <div class="sun-card__moon" :style="orbitRotate">
+        <div class="sun-card__moon-icon" :style="moonBackground"></div>
+      </div>
+    </div>
+    <div class="sun-card__info">
+      <div class="sun-card__sunrise-sunset">
+        <div class="sun-card__sunrise-sunset-icon"></div>
+        <div class="sun-card__day-duration">
+          <h3 class="sun-card__day-duration-label" aria-label="Световой день">
+            Световой день
+          </h3>
+          <div class="sun-card__day-duration-value">{{ daylongTime }}</div>
+        </div>
+        <div class="sun-card__sunrise-sunset-info-wrapper">
+          <div
+            class="sun-card__sunrise-sunset-info sun-card__sunrise-sunset-info-rise-time"
+          >
+            <p>
+              <strong>{{ sunriseTime }}</strong>
+            </p>
+          </div>
+          <div
+            class="sun-card__sunrise-sunset-info sun-card__sunrise-sunset-info-set-time"
+          >
+            <p>
+              <strong>{{ sunsetTime }}</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="sun-card__text-info">
+        <p class="sun-card__text-info-item">{{ moonPhase }}</p>
+        <p class="sun-card__text-info-item">{{ uvIndex }}</p>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import { moonPhases, indexUV, daylong } from 	'@/plugins/celestialBody'
+import { moonPhases, indexUV, daylong } from "@/plugins/celestialBody";
 
-	export default {
-		props: {
-			card: {
-				type: Object,
-				required: true
-			}
-		},
+export default {
+  props: {
+    card: {
+      type: Object,
+      required: true,
+    },
+  },
 
-		computed: {			
-			sunrise() {
-				return this.card.forecast.forecastday[0].astro.sunrise
-			},
+  computed: {
+    sunrise() {
+      return this.card.forecast.forecastday[0].astro.sunrise;
+    },
 
-			sunset() {
-				return this.card.forecast.forecastday[0].astro.sunset
-			},
+    sunset() {
+      return this.card.forecast.forecastday[0].astro.sunset;
+    },
 
-			sunriseTime() {
-				return daylong(this.sunrise, this.sunset)[0]
-			},
+    sunriseTime() {
+      return daylong(this.sunrise, this.sunset)[0];
+    },
 
-			sunsetTime() {
-				return daylong(this.sunrise, this.sunset)[1]
-			},
+    sunsetTime() {
+      return daylong(this.sunrise, this.sunset)[1];
+    },
 
-			daylongTime() {
-				return daylong(this.sunrise, this.sunset)[2]
-			},
+    daylongTime() {
+      return daylong(this.sunrise, this.sunset)[2];
+    },
 
-			phaseName() {
-				return this.card.forecast.forecastday[0].astro.moon_phase
-			},
+    phaseName() {
+      return this.card.forecast.forecastday[0].astro.moon_phase;
+    },
 
-			moonPhase() {
-				return `${moonPhases(this.phaseName)[0]}`
-			},
+    moonPhase() {
+      return `${moonPhases(this.phaseName)[0]}`;
+    },
 
-			orbitRotate() {
-				return `${moonPhases(this.phaseName)[1]}`
-			},
+    orbitRotate() {
+      return `${moonPhases(this.phaseName)[1]}`;
+    },
 
-			moonBackground() {
-				return `background-image: url('${moonPhases(this.phaseName)[2]}')`
-			},
+    moonBackground() {
+      return `background-image: url('${moonPhases(this.phaseName)[2]}')`;
+    },
 
-			uvIndex() {
-				return indexUV(this.card.forecast.forecastday[0].day.uv)
-			},
-		}
-	
-	}
+    uvIndex() {
+      return indexUV(this.card.forecast.forecastday[0].day.uv);
+    },
+  },
+};
 </script>
 
 <style lang="sass" scoped>
@@ -160,7 +158,7 @@ import { moonPhases, indexUV, daylong } from 	'@/plugins/celestialBody'
 			width: 90px
 			height: 90px
 			background-position: center
-			background-repeat: no-repeat	
+			background-repeat: no-repeat
 			background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTAiIGhlaWdodD0iOTEiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iNDUiIGN5PSI0NS41NDEiIHI9IjQzIiBmaWxsPSJ1cmwoI3BhaW50MF9saW5lYXIpIi8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0zNS4wMzcgMjMuNTk5YzEuNzI2IDAgMS42MjQtMS4yOTYuMzMtMy4yODgtLjI1Ny0uMzk1LTEuMTM2LS40MDUtMi4wNjEtLjQxNS0uODctLjAxLTEuNzgyLS4wMTktMi4yNTQtLjM1MS0uNzgtLjU1LjgzOS0yLjcwNSAxLjgwNi0yLjc2N2E3MS44NCA3MS44NCAwIDAxMS4yMTYtLjA2M2MzLjAxOC0uMTQgNi4zNi0uMjk3IDMuODc0LTIuNzI4LTEuMzU5LTEuMzMtNC41MjYuODY0LTYuNjI0IDIuMzk3LS40MjMuMzEtLjc3Ljc1Mi0xLjExMSAxLjE4Ny0uNTY5LjcyNC0xLjEyMiAxLjQzLTEuOTg2IDEuNDcyLS43NjQuMDM4LTEuNjI1LTEuOTE0LTIuMjExLTMuMjQyLS4yNjgtLjYwNy0uNDc4LTEuMDg0LS41OTYtMS4xODItLjIyNS0uMTg3LTEuMjQzLjE5MS0xLjEwNi45MzEuMDM0LjE4My4zMTMuNTg3LjU5Ljk4Ny4zNjkuNTMzLjczNCAxLjA2Mi41MTYgMS4wNjItLjI3NSAwLS4zOTMuMTk0LS41MTcuMzk4LS4wNzcuMTI3LS4xNTYuMjU3LS4yNzYuMzQ2LS4xMDYuMDc4LS4yMzItLjI5LS4zODEtLjcyNC0uMTMyLS4zODQtLjI4Mi0uODItLjQ1MS0xLjA0Ni0xLjI0OC0xLjY2Ni0xLjk5OC0xLjM2NS0yLjY4NS0xLjA4OC0uMS4wNC0uMi4wOC0uMy4xMTQtMS4wODguMzYyLTEuNTM0Ljg3Mi0yLjE2MyAxLjU5LS4yMzguMjczLS41MDIuNTc1LS44MzcuOTEtMSAxLTMgMS41ODYtNC41IDEuNS0uNTUtLjAzMi4xMjctMi4xOTIgMS0zLjUuMTk3LS4yOTYuNTQ1LS40NjguOTkzLS42OS4zODUtLjE5Ljg0NC0uNDE3IDEuMzQ0LS43OWwuNjE4LS40NjVjMS44MTktMS4zNzcgNC4yNDctMy4yMTQgNy4wNDktNC4wNTYuNjE2LS4xODQgMS42ODgtLjQyNiAyLjgzOS0uNjg2IDIuMjUtLjUwNyA0Ljc5NS0xLjA4MiA0Ljc5NS0xLjQyNSAwLS4zOS0xLjA3Ni0uMjY1LTIuMjgzLS4xMjYtLjQwMy4wNDYtLjgyLjA5NC0xLjIxNy4xMjYtMS40MTcuMTEyLTEuNjg3LS4xMTgtMS0xIC42MS0uNzgzIDIuOTE2LTEuMDg0IDQuNjkyLTEuMzE1LjQ5My0uMDY0Ljk0NC0uMTIzIDEuMzA4LS4xODUgMS45NDMtLjMzNCA0Ljg5LS42OTkgNi41LS41IDIuNDg5LjMwNyA5LjI4NS0uMzIgOS41LTIgLjA4LS42MjQgMTEuMjc2Ljk5NSAxNy44NjIgNS4xMTEgOCA1IDExIDguNSAxNC41IDE1IDEuMzY4IDIuNTQxLjM3NSAzLjcxOC0uODY2IDUuMTg2LS41NTkuNjYyLTEuMTY4IDEuMzgzLTEuNjM0IDIuMzE1LS41NDUgMS4wOS4yNCAyLjY3NS45NzQgNC4xNTQuODggMS43NzIgMS42ODIgMy4zOS4wMjYgMy44MjMtMS4zMjcuMzQ3LTIuNzkxLTEuNDgzLTQuNDEyLTMuNTA2LS44MjItMS4wMjctMS42ODMtMi4xMDQtMi41ODgtMi45NzEtLjQ2LS40NDEtLjc5Mi0uOTU3LTEuMTAyLTEuNDM3LS42MTgtLjk1Ny0xLjE0NC0xLjc3MS0yLjM5OC0xLjU2My0yLjUwNy40MTUtNC41IDQtNC41IDggMCAuNjc1LTEuMTU2IDIuOTE2LTIgMi0uNzA2LS43NjctMS4yNTItMi4xNTMtMS44NjctMy43MTItMS4yMDgtMy4wNjItMi42NzgtNi43OS02LjEzMy03Ljc4OC0yLjQ3NC0uNzE2LTMuODAyLS44NTQtNS4wMDEtLjk4LS45MjItLjA5Ni0xLjc2Ny0uMTg0LTIuOTk5LS41Mi0uMzQ1LS4wOTUtLjc0Ni0uMjYzLTEuMTQtLjQyOC0uOTUtLjM5OC0xLjg2LS43OC0xLjg2LS4wNzIgMCAuODQxLjUgMiAxLjUgMi41LjY3My4zMzYgMS42Ny4yNCAyLjYwNi4xNDkgMS4wNi0uMTAzIDIuMDQ0LS4xOTggMi4zOTQuMzUgMi4wNDggMy4yMTItNi4zMjkgNy4xNzItMTAgNy0yLjExNS0uMDk4LTMuNTMtMy41NjMtNC42ODYtNi4zOTItLjM4Ni0uOTQ1LS43NDItMS44MTktMS4wODctMi40NzItLjMwMy0uNTc2LTEuNDA0LS4xNDUtMS4yMjcuMzY0LjE3LjQ4OC4zMzYgMS4wMTEuNTEgMS41NTcuOTk2IDMuMTMgMi4yMjMgNi45ODYgNS40OSA4Ljk0NC40My4yNTcgMS4zMi4yMyAyLjI2My4yMDMgMS42MjktLjA0OCAzLjQxMi0uMTAxIDMuMjM3IDEuMjk3LS4yMjUgMS43OTgtMi42NDcgNC41OS02IDcuNS0yLjE1NiAxLjg3LTEuNTIgNS4zNjUtMSA4IC4zNzggMS45MTItLjYwMSAyLjg0Ny0xLjYzOSAzLjgzOC0uNzU4LjcyMy0xLjU0NyAxLjQ3Ny0xLjg2IDIuNjYyLTEuMTIxIDQuMjIzLTMuMDY1IDkuMjUzLTcuMjcxIDkuMjUzLTMuMDIgMC02LjY2Ni02LjkyNy03LjczLTEwLjI1NC0uMzgtMS4xODYtLjUyOC0yLjY2Ni0uNjg0LTQuMjItLjIxNi0yLjE0Ni0uNDQ2LTQuNDMxLTEuMzE2LTYuMjgtLjQzLS45MTItLjU3LTEuOTAzLS43MDUtMi44Ni0uMjA0LTEuNDM1LS4zOTYtMi43OTItMS41MzMtMy42OTItLjc5NS0uNjI5LTEuNzM4LS42MjMtMi45MTItLjYxNy0xLjI5OS4wMDctMi44NzkuMDE2LTQuODUtLjgzLTIuNDU2LTEuMDU2LTIuODg4LTUuMTE5LTEuNzk2LTEwIDEuMzUyLTYuMDQ0IDUuODE3LTEwLjUgMTEuNzk2LTEyLjA1NCAyLjU2Mi0uNjY2IDMuNTY1LjE0OSA0LjY0MiAxLjAyNC42MDUuNDkxIDEuMjM0IDEuMDAxIDIuMTc1IDEuMjc5LjkyNC4yNzMgMS43MS41OCAyLjQ0My44NjYuOTQuMzY4IDEuNzkzLjcwMSAyLjc0Ljg4NSAxLjI4NC4yNDggMi4xNDQuMTggMy4xOC4wOThhMjQuMTUzIDI0LjE1MyAwIDAxMi4wNDctLjA5OHptOC40ODUtOC45MjlsLS4wMTMtLjA4M2MtLjA1LS4zMjktLjExNC0uNzU5LjAxMy0xLjAxNC4xMzctLjI3OC45OS4xNjMgMS4zMy42NjhsLjEzNy4yYy41MDQuNzM2IDEuNTg1IDIuMzEgMS41ODUgMy4yNDYgMCAuNzQ0LS45MSAxLjIyNy0xLjQ4NS42OTMtLjU1LS41MTItMS40LTIuNTY3LTEuNTY3LTMuNzF6bTM5LjkyNiAyOS44MTdjLS4yODgtLjg2NC0uMDc4LTEuMzk3LjE1MS0xLjk4LjE3LS40MjguMzQ5LS44ODQuMzQ5LTEuNTIgMC0xLjUuNjY3LTEgMSAwIC4zMzMgMSAuNSAyIC41IDMgMCAuNS0xLjUgMi0yIC41em0wIDE0Yy0xLjUgMS41LTMgNC0zIDYuNSAwIDEgLjIgMyAxIDMgMSAwIDUtOC41IDUtMTEgMC0xLjUtMS41NDIuMDQyLTMgMS41em0tMzkuOTM1IDQuNjMyYy0xLjA3NyAyLjIyNS0yLjM2MyAxLjkzNC0zLjI3OC45OTUtLjkxMi0uOTM2IDIuOTYyLTguOTA0IDMuMjc4LTguNjI3Ljc2NC42NjkuODYxIDUuODUyIDAgNy42MzJ6IiBmaWxsPSJ1cmwoI3BhaW50MV9saW5lYXIpIi8+PHBhdGggb3BhY2l0eT0iLjUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNNTMuMTI5IDMuMTk4YTIxMC4wNTQgMjEwLjA1NCAwIDAxMy4zMDggMjQuODU0IDUuOTggNS45OCAwIDAwLTEuMTI3LS40NTNjLTIuNDc0LS43MTYtMy44MDItLjg1NC01LjAwMS0uOTgtLjkyMi0uMDk2LTEuNzY3LS4xODQtMi45OTktLjUyLS4zNDUtLjA5NS0uNzQ2LS4yNjMtMS4xNC0uNDI4LS45NS0uMzk4LTEuODYtLjc4LTEuODYtLjA3MiAwIC44NDEuNSAyIDEuNSAyLjUuNjczLjMzNiAxLjY3LjI0IDIuNjA2LjE0OSAxLjA2LS4xMDMgMi4wNDQtLjE5OCAyLjM5NC4zNSAyLjA0OCAzLjIxMi02LjMyOSA3LjE3Mi0xMCA3LTIuMTE1LS4wOTgtMy41My0zLjU2My00LjY4Ni02LjM5Mi0uMzg2LS45NDUtLjc0Mi0xLjgxOS0xLjA4Ny0yLjQ3Mi0uMzAzLS41NzYtMS40MDQtLjE0NS0xLjIyNy4zNjQuMTcuNDg4LjMzNiAxLjAxMS41MSAxLjU1Ny45OTYgMy4xMyAyLjIyMyA2Ljk4NiA1LjQ5IDguOTQ0LjQzLjI1NyAxLjMyLjIzIDIuMjYzLjIwMyAxLjYyOS0uMDQ4IDMuNDEyLS4xMDEgMy4yMzcgMS4yOTctLjIyNSAxLjc5OC0yLjY0NyA0LjU5LTYgNy41LTIuMTU2IDEuODctMS41MiA1LjM2NS0xIDggLjM3OCAxLjkxMi0uNjAxIDIuODQ3LTEuNjM5IDMuODM4LS43NTguNzIzLTEuNTQ3IDEuNDc3LTEuODYgMi42NjItMS4xMjEgNC4yMjMtMy4wNjUgOS4yNTMtNy4yNzEgOS4yNTMtMy4wMiAwLTYuNjY2LTYuOTI3LTcuNzMtMTAuMjU0LS4zOC0xLjE4Ni0uNTI4LTIuNjY2LS42ODQtNC4yMi0uMjE2LTIuMTQ2LS40NDYtNC40MzEtMS4zMTYtNi4yOC0uNDMtLjkxMi0uNTctMS45MDMtLjcwNS0yLjg2LS4yMDQtMS40MzUtLjM5Ni0yLjc5Mi0xLjUzMy0zLjY5Mi0uNzk1LS42MjktMS43MzgtLjYyMy0yLjkxMi0uNjE3LTEuMjk5LjAwNy0yLjg3OS4wMTYtNC44NS0uODMtMi40NTYtMS4wNTYtMi44ODgtNS4xMTktMS43OTYtMTAgMS4zNTItNi4wNDQgNS44MTctMTAuNSAxMS43OTYtMTIuMDU0IDIuNTYyLS42NjYgMy41NjUuMTQ5IDQuNjQyIDEuMDI0LjYwNS40OTEgMS4yMzQgMS4wMDEgMi4xNzUgMS4yNzkuOTI0LjI3MyAxLjcxLjU4IDIuNDQzLjg2Ni45NC4zNjggMS43OTMuNzAxIDIuNzQuODg1IDEuMjg0LjI0OCAyLjE0NC4xOCAzLjE4LjA5OGEyNC4xNTMgMjQuMTUzIDAgMDEyLjA0Ny0uMDk4YzEuNzI2IDAgMS42MjQtMS4yOTYuMzMtMy4yODgtLjI1Ny0uMzk1LTEuMTM2LS40MDUtMi4wNjEtLjQxNS0uODctLjAxLTEuNzgyLS4wMTktMi4yNTQtLjM1MS0uNzgtLjU1LjgzOS0yLjcwNSAxLjgwNi0yLjc2N2E3MS44NCA3MS44NCAwIDAxMS4yMTYtLjA2M2MzLjAxOC0uMTQgNi4zNi0uMjk3IDMuODc0LTIuNzI4LTEuMzU5LTEuMzMtNC41MjYuODY0LTYuNjI0IDIuMzk3LS40MjMuMzEtLjc3Ljc1Mi0xLjExMSAxLjE4Ny0uNTY5LjcyNC0xLjEyMiAxLjQzLTEuOTg2IDEuNDcyLS43NjQuMDM4LTEuNjI1LTEuOTE0LTIuMjExLTMuMjQyLS4yNjgtLjYwNy0uNDc4LTEuMDg0LS41OTYtMS4xODItLjIyNS0uMTg3LTEuMjQzLjE5MS0xLjEwNi45MzEuMDM0LjE4My4zMTMuNTg3LjU5Ljk4Ny4zNjkuNTMzLjczNCAxLjA2Mi41MTYgMS4wNjItLjI3NSAwLS4zOTMuMTk0LS41MTcuMzk4LS4wNzcuMTI3LS4xNTYuMjU3LS4yNzYuMzQ2LS4xMDYuMDc4LS4yMzItLjI5LS4zODEtLjcyNC0uMTMyLS4zODQtLjI4Mi0uODItLjQ1MS0xLjA0Ni0xLjI0OC0xLjY2Ni0xLjk5OC0xLjM2NS0yLjY4NS0xLjA4OC0uMS4wNC0uMi4wOC0uMy4xMTQtMS4wODguMzYyLTEuNTM0Ljg3Mi0yLjE2MyAxLjU5LS4yMzguMjczLS41MDIuNTc1LS44MzcuOTEtMSAxLTMgMS41ODYtNC41IDEuNS0uNTUtLjAzMi4xMjctMi4xOTIgMS0zLjUuMTk3LS4yOTYuNTQ1LS40NjguOTkzLS42OS4zODUtLjE5Ljg0NC0uNDE3IDEuMzQ0LS43OWwuNjE4LS40NjVjMS44MTktMS4zNzcgNC4yNDctMy4yMTQgNy4wNDktNC4wNTYuNjE2LS4xODQgMS42ODgtLjQyNiAyLjgzOS0uNjg2IDIuMjUtLjUwNyA0Ljc5NS0xLjA4MiA0Ljc5NS0xLjQyNSAwLS4zOS0xLjA3Ni0uMjY1LTIuMjgzLS4xMjYtLjQwMy4wNDYtLjgyLjA5NC0xLjIxNy4xMjYtMS40MTcuMTEyLTEuNjg3LS4xMTgtMS0xIC42MS0uNzgzIDIuOTE2LTEuMDg0IDQuNjkyLTEuMzE1LjQ5My0uMDY0Ljk0NC0uMTIzIDEuMzA4LS4xODUgMS45NDMtLjMzNCA0Ljg5LS42OTkgNi41LS41IDIuNDg5LjMwNyA5LjI4NS0uMzIgOS41LTIgLjAyOS0uMjI1IDEuNS0uMTU4IDMuNjguMjExem0tOS42MiAxMS4zODlsLjAxMy4wODNjLjE2NyAxLjE0MyAxLjAxNyAzLjE5OCAxLjU2NyAzLjcxLjU3NC41MzQgMS40ODUuMDUxIDEuNDg1LS42OTMgMC0uOTM1LTEuMDgtMi41MS0xLjU4NS0zLjI0NWwtLjEzOC0uMjAxYy0uMzQtLjUwNS0xLjE5Mi0uOTQ2LTEuMzMtLjY2OC0uMTI2LjI1NS0uMDYxLjY4NS0uMDEyIDEuMDE0em0tMy4yNzQgNDkuNTI3Yy45MTUuOTM5IDIuMiAxLjIzIDMuMjc4LS45OTUuODYxLTEuNzguNzY0LTYuOTYzIDAtNy42MzItLjMxNi0uMjc2LTQuMTkgNy42OS0zLjI3OCA4LjYyN3oiIGZpbGw9IiM5NEUyOEQiLz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXIiIHgxPSIyNC43OTQiIHkxPSI0MS43ODQiIHgyPSI4MC4zMjkiIHkyPSI0NS42OTYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNjZCMUZGIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMjE4OEZGIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9InBhaW50MV9saW5lYXIiIHgxPSI3Ni4xMjkiIHkxPSIzMy4wODUiIHgyPSIxNy43NDgiIHkyPSIzNC4wMzEiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjMzFCNDk5Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNTVFM0FBIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PC9zdmc+")
 
 	&__moon
@@ -179,7 +177,7 @@ import { moonPhases, indexUV, daylong } from 	'@/plugins/celestialBody'
 			width: 28px
 			height: 28px
 
-	&__info	
+	&__info
 		z-index: 4
 		position: absolute
 		top: 0
@@ -217,7 +215,7 @@ import { moonPhases, indexUV, daylong } from 	'@/plugins/celestialBody'
 
 			&-rise-time
 				margin-left: -5px
-				
+
 			&-set-time
 				margin-right: -5px
 
@@ -250,5 +248,4 @@ import { moonPhases, indexUV, daylong } from 	'@/plugins/celestialBody'
 		&-item
 			& + &
 				margin-top: 5px
-
 </style>

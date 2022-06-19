@@ -9,6 +9,7 @@
 		<div>Lat: {{ card.location.lat }} </div> -->
 		
 	</div>
+	<!-- <button @click="test">test</button> -->
 </template>
 
 <script>
@@ -28,6 +29,12 @@ import {computed, ref, registerRuntimeCompiler} from 'vue'
 		},
 
 		methods: {
+  
+			test() {
+				console.log(this.coords)
+			},
+
+
 			createMap() {
 				return new Map({
 					target: this.$refs.myMap,
@@ -44,9 +51,6 @@ import {computed, ref, registerRuntimeCompiler} from 'vue'
       	})
 			},
 
-			test() {
-
-			}
 
 		},
 

@@ -1,6 +1,6 @@
 <template>
 	<div 
-		v-if="card.location"
+		
 		class="calendar"
 	>
 		<div class="calendar-month">

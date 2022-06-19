@@ -1,60 +1,52 @@
 <template>
-	<div class="inner-wrapper--wide">
-		<div class="inner-wrapper">
-			<my-header @findWeatherInCity="fetchWeather"/>
-		</div>
-	</div>
-	<div class="inner-wrapper">
-		<nav-breadcrumbs 
-			:card="card"
-		/>
-		<day-forecast 
-      :card="card"
-    />
-	</div>
+  <div class="inner-wrapper--wide">
+    <div class="inner-wrapper">
+      <my-header @findWeatherInCity="fetchWeather" />
+    </div>
+  </div>
+  <div class="inner-wrapper">
+    <nav-breadcrumbs :card="card" />
+    <day-forecast :card="card" />
+  </div>
 </template>
 
 <script>
-import MyHeader from '@/components/MyHeader'
-import NavBreadcrumbs from '@/components/NavBreadcrumbs'
-import DayForecast from '@/components/DayForecast'
-import { loadWeather } from '@/plugins/api.js'
+import MyHeader from "@/components/MyHeader";
+import NavBreadcrumbs from "@/components/NavBreadcrumbs";
+import DayForecast from "@/components/DayForecast";
+import { loadWeather } from "@/plugins/api.js";
 
-	export default {
-		components: {
-			MyHeader,
-			NavBreadcrumbs,
-			DayForecast,
-  	},
+export default {
+  components: {
+    MyHeader,
+    NavBreadcrumbs,
+    DayForecast,
+  },
 
-		data() {
-			return {
-				card: {},
-			}
-		},
+  data() {
+    return {
+      card: {},
+    };
+  },
 
-		methods: {
-			async fetchWeather(name) {
-				try {
-					const res = await loadWeather(name);
-					this.card = res.data
-					this.card.forecast.forecastday.forEach(day => {
-						day.hour.forEach(field => {
-							field.time = field.time.split('').slice(11).join('')
-							field.temp_c = Math.round(field.temp_c)
-						})
-					})
-					console.log(this.card)
-				} catch(e) {
-					console.log(e)
-				}
-    	},
-
-		},
-
-	}
+  methods: {
+    async fetchWeather(name) {
+      try {
+        const res = await loadWeather(name);
+        this.card = res.data;
+        this.card.forecast.forecastday.forEach((day) => {
+          day.hour.forEach((field) => {
+            field.time = field.time.split("").slice(11).join("");
+            field.temp_c = Math.round(field.temp_c);
+          });
+        });
+        console.log(this.card);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+  },
+};
 </script>
 
-<style lang="sass" scoped>
-
-</style>
+<style lang="sass" scoped></style>

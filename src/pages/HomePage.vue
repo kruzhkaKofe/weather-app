@@ -1,56 +1,39 @@
 <template>
-	<div class="inner-wrapper--wide">
-		<div class="inner-wrapper">
-			<my-header @findWeatherInCity="fetchWeather"/>
-		</div>
-	</div>
-  <div 
-    v-if="card.location"
-    class="inner-wrapper"
-  >
-    <nav-breadcrumbs 
-      :card="card"
-    />
+  <div class="inner-wrapper--wide">
+    <div class="inner-wrapper">
+      <my-header @findWeatherInCity="fetchWeather" />
+    </div>
+  </div>
+  <div v-if="card.location" class="inner-wrapper">
+    <nav-breadcrumbs :card="card" />
     <div class="card-wrapper">
-      <facts-card
-        v-for="(n, idx) in 2"
-        :key="idx"
-      >
+      <facts-card v-for="(n, idx) in 2" :key="idx">
         {{ facts(n) }}
       </facts-card>
-		  <current-card 
-			  :card="card"
-		  />
-		  <map-card :card="card"/>
+      <current-card :card="card" />
+      <map-card :card="card" />
     </div>
-    <day-forecast-carousel
-      :card="card"
-    />
+    <day-forecast-carousel :card="card" />
     <div class="some-cards">
-      <sun-card 
-        :card="card"
-      />
-      <div class="some-cards__div">
-        some content...
-      </div>
+      <sun-card :card="card" />
+      <div class="some-cards__div">some content...</div>
     </div>
-    <day-forecast 
-      :card="card"
-    />
+    <day-forecast :card="card" />
   </div>
 </template>
 
 <script>
-import MyHeader from '@/components/MyHeader';
-import NavBreadcrumbs from '@/components/NavBreadcrumbs';
-import FactsCard from '@/components/FactsCard'
-import CurrentCard from '@/components/CurrentCard'
-import MapCard from '@/components/MapCard'
-import DayForecastCarousel from '@/components/DayForecastCarousel';
-import SunCard from '@/components/SunCard';
-import DayForecast from '@/components/DayForecast';
-import { loadWeather } from '@/plugins/api.js'
-import { averageWindSpeed } from '@/plugins/naturalCondition'
+import MyHeader from "@/components/MyHeader";
+import NavBreadcrumbs from "@/components/NavBreadcrumbs";
+import FactsCard from "@/components/FactsCard";
+import CurrentCard from "@/components/CurrentCard";
+import MapCard from "@/components/MapCard";
+import DayForecastCarousel from "@/components/DayForecastCarousel";
+import SunCard from "@/components/SunCard";
+import DayForecast from "@/components/DayForecast";
+import { loadWeather } from "@/plugins/api.js";
+import { averageWindSpeed } from "@/plugins/naturalCondition";
+import { ref } from "vue";
 
 export default {
   components: {
@@ -64,66 +47,59 @@ export default {
     DayForecast,
   },
 
-  data() {
-    return {
-      card: {},
-    }
-  },
+  setup() {
+    const card = ref({});
 
-  // setup(emit) {
-  //   import { defineEmits, watch, ref } from 'vue'
-  //   const emit = defineEmits('findWeatherInCity')
-  //   const card = fetchWeather(name)
-
-  //   return {
-  //     card
-  //   }
-  // },
-
-
-  methods: {  
-    async fetchWeather(name)  {
+    const fetchWeather = async (name) => {
       try {
         const res = await loadWeather(name);
-        this.card = res.data
-        this.card.forecast.forecastday.forEach(day => {
-          day.hour.forEach(field => {
-            field.time = field.time.split('').slice(11).join('')
-            field.temp_c = Math.round(field.temp_c)
-          })
-        })
-        console.log(this.card)
-      } catch(e) {
-        console.log(e)
+        card.value = res.data;
+        card.value.forecast.forecastday.forEach((day) => {
+          day.hour.forEach((field) => {
+            field.time = field.time.split("").slice(11).join("");
+            field.temp_c = Math.round(field.temp_c);
+          });
+        });
+        console.log(card.value);
+      } catch (e) {
+        console.log(e);
       }
-    },
+    };
 
-    minTemp(dayNum) {
-      const minT = Math.round(this.card.forecast.forecastday[dayNum].day.mintemp_c)
-      return minT > 0 ? `+${minT}` : `${minT}`
-    }, 
-
-     maxTemp(dayNum) {
-      let maxT = Math.round(this.card.forecast.forecastday[dayNum].day.maxtemp_c)
-      return maxT > 0 ? `+${maxT}` : `${maxT}`
-    },
-
-    avgWindSpeed(dayNum) {
-      return averageWindSpeed(this.card.forecast.forecastday[dayNum].hour)
-    },
-
-    facts(dayNum) {
-      const min = this.minTemp(dayNum)
-      const max = this.maxTemp(dayNum)
-      const wind = this.avgWindSpeed(dayNum)
-      return  dayNum === 0 
-        ? `Сегодня: ${min}...${max}°; ветер ${wind} м/с;`
-        : `Завтра: ${min}...${max}°; ветер ${wind} м/с;`
+    function minTemp(dayNum) {
+      const minT = Math.round(
+        card.value.forecast.forecastday[dayNum].day.mintemp_c
+      );
+      return minT > 0 ? `+${minT}` : `${minT}`;
     }
 
-  },
+    function maxTemp(dayNum) {
+      let maxT = Math.round(
+        card.value.forecast.forecastday[dayNum].day.maxtemp_c
+      );
+      return maxT > 0 ? `+${maxT}` : `${maxT}`;
+    }
 
-}
+    function avgWindSpeed(dayNum) {
+      return averageWindSpeed(card.value.forecast.forecastday[dayNum].hour);
+    }
+
+    function facts(dayNum) {
+      const min = minTemp(dayNum);
+      const max = maxTemp(dayNum);
+      const wind = avgWindSpeed(dayNum);
+      return dayNum === 0
+        ? `Сегодня: ${min}...${max}°; ветер ${wind} м/с;`
+        : `Завтра: ${min}...${max}°; ветер ${wind} м/с;`;
+    }
+
+    return {
+      card,
+      fetchWeather,
+      facts,
+    };
+  },
+};
 </script>
 
 <style lang="sass" scoped>
@@ -162,5 +138,4 @@ export default {
 
 .secondary-text
   opacity: 0.7
-
 </style>
