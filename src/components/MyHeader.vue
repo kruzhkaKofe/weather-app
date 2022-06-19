@@ -1,15 +1,15 @@
 <template>
 	<header class="header">
 		<div class="header__logo">
-			<a 
+			<router-link 
 				class="header__logo-link"
-				@click="$router.push('/')"
+				to="/"
 			>
 				<img class="header__logo-img" src="@/assets/icons/main-logo.png" alt="main-logo">
 				forecast.
-			</a>
+			</router-link>
 		</div>
-		<button class="header__btn" @click="$router.push('/history')">История погоды</button>
+		<router-link class="header__history" to="/history">История погоды</router-link>
 		<search-form
 			@findWeatherInCity="findWeather"
 		/>
@@ -63,12 +63,12 @@ import SearchForm from '@/components/SearchForm'
 			@include logo-icon
 			margin-right: 10px
 
-	&__btn
+	&__history
 		padding: 5px 15px
 		font-size: $small
-		border: none
+		color: black
 		background: white
 		opacity: 0.7
 		border-radius: 5px
-		cursor: pointer
+
 </style>

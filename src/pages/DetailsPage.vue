@@ -18,7 +18,7 @@
 import MyHeader from '@/components/MyHeader'
 import NavBreadcrumbs from '@/components/NavBreadcrumbs'
 import DayForecast from '@/components/DayForecast'
-import { weatherLoader } from '@/plugins/api.js'
+import { loadWeather } from '@/plugins/api.js'
 
 	export default {
 		components: {
@@ -36,7 +36,7 @@ import { weatherLoader } from '@/plugins/api.js'
 		methods: {
 			async fetchWeather(name) {
 				try {
-					const res = await weatherLoader(name);
+					const res = await loadWeather(name);
 					this.card = res.data
 					this.card.forecast.forecastday.forEach(day => {
 						day.hour.forEach(field => {

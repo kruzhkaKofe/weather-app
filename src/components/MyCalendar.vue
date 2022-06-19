@@ -145,13 +145,13 @@
 
 .previous-month,
 .previous
-	background-color: hsl(0, 0%, 85%)
+	background-color: hsl(0, 0%, 80%)
 
 .today
 	background-color: #fff
 
 .choised
-	background-color: pink
+	background-color: yellow
 	
 .calendar
 	width: 700px
@@ -223,6 +223,6 @@
 				&:hover
 					cursor: pointer
 					transition: 0.4s
-					background-color: pink
+					background-color: yellow
 
 </style>
