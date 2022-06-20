@@ -1,45 +1,42 @@
 <template>
-	<form @submit.prevent>
-		<input
-			v-model="name"
-			type="text" 
-			placeholder="Название города (eng)...">
-		<button @click="findWeather">Найти</button>
-	</form>
+  <form @submit.prevent>
+    <input v-model="name" type="text" placeholder="Название города (eng)..." />
+    <button @click="findWeather">Найти</button>
+  </form>
 </template>
 
 <script>
-	export default {
+import { onMounted, ref } from "vue";
 
-		data() {
-			return {
-				name: '',
-				date: ''
-    	}
-  	},
-		
-		methods: {
-			findWeather() {
-				this.$emit('findWeatherInCity', this.name, this.date);
-				this.name = '';
-			},
-			
-			currentDate(){
-				const year = new Date().getFullYear()
-				const month = (new Date().getMonth() + 1).toString().padStart(2, '0')
-				const date = (new Date().getDate()).toString().padStart(2, '0')
-				return `${date}.${month}.${year}`
-			},
+export default {
+  setup(_, { emit }) {
+    const name = ref("");
+    const date = ref("");
 
-		},
-		
-		created() {
-			this.name = 'Izhevsk'
-			this.date = this.currentDate()
-			this.findWeather()
-		}
+    const currentDate = () => {
+      const year = new Date().getFullYear();
+      const month = (new Date().getMonth() + 1).toString().padStart(2, "0");
+      const date = new Date().getDate().toString().padStart(2, "0");
+      return `${date}.${month}.${year}`;
+    };
 
-	}
+    const findWeather = () => {
+      emit("findWeatherInCity", name.value, date.value);
+      name.value = "";
+    };
+
+    onMounted(() => {
+      name.value = "Izhevsk";
+      date.value = currentDate;
+      findWeather();
+    });
+
+    return {
+      name,
+      findWeather,
+    };
+  },
+};
 </script>
 
 <style lang="sass" scoped>
@@ -61,5 +58,4 @@ button
 	opacity: 0.7
 	border-radius: 0 5px 5px 0
 	cursor: pointer
-
 </style>
