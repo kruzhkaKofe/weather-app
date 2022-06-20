@@ -55,16 +55,18 @@ export default {
     },
   },
 
-	setup(props) {
-		const sunrise = computed(() => daylong(props.card.forecast.forecastday[0].astro.sunrise, props.card.forecast.forecastday[0].astro.sunset)[0])
-   	const sunset = computed(() => daylong(props.card.forecast.forecastday[0].astro.sunrise, props.card.forecast.forecastday[0].astro.sunset)[1])
-		const dayLong = computed(() => daylong(props.card.forecast.forecastday[0].astro.sunrise, props.card.forecast.forecastday[0].astro.sunset)[2])
-		const moonPhase = computed(() => moonPhases(props.card.forecast.forecastday[0].astro.moon_phase)[0])
-		const orbitRotate = computed(() => moonPhases(props.card.forecast.forecastday[0].astro.moon_phase)[1])
+	setup({ card }) {
+		const sunrise = computed(() => daylong(card.forecast.forecastday[0].astro.sunrise, card.forecast.forecastday[0].astro.sunset)[0])
+   	const sunset = computed(() => daylong(card.forecast.forecastday[0].astro.sunrise, card.forecast.forecastday[0].astro.sunset)[1])
+		const dayLong = computed(() => daylong(card.forecast.forecastday[0].astro.sunrise, card.forecast.forecastday[0].astro.sunset)[2])
+		const moonPhase = computed(() => moonPhases(card.forecast.forecastday[0].astro.moon_phase)[0])
+		const orbitRotate = computed(() => moonPhases(card.forecast.forecastday[0].astro.moon_phase)[1])
+
 		const moonBackground = computed(() => {
-			return `background-image: url('${moonPhases(props.card.forecast.forecastday[0].astro.moon_phase)[2]}')`
+			return `background-image: url('${moonPhases(card.forecast.forecastday[0].astro.moon_phase)[2]}')`
 		})
-		const uvIndex = computed(() => indexUV(props.card.forecast.forecastday[0].day.uv))
+		
+		const uvIndex = computed(() => indexUV(card.forecast.forecastday[0].day.uv))
 
 		return {
 			sunrise,

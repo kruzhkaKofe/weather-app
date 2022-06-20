@@ -1,149 +1,169 @@
 <template>
-	<div 
-		
-		class="calendar"
-	>
-		<div class="calendar-month">
-			<div 
-				class="calendar-month__item"
-				v-for="(month, i) in currentMonth"
-				:key="i"
-			>	
-				<input
-					class="calendar-month__item-radio" 
-					type="radio" 
-					:id="i"
-					name="months" 
-					:checked="checkedMonth"
-					:value="month" 
-					v-model="choisedMonth"
-				>
-				<label class="calendar-month__item-label" :for="i">{{ month }}</label>
-			</div>
-		</div>
-		<div class="calendar-days">
-			<div
-				v-for="(n, i) in quantityDays"
-				:key="i"
-				class="calendar-days__day-wrapper"
-			>	
-				<time 
-					class="calendar-days__day-item"
-					:class="{
-						'previous': isToday(n) === false,
-						'today': isToday(n),
-						'choised': date === dateTime(n),
-					}"
-					:datetime="dateTime(n)"
-					@click="findHistory(n)"
-				>
-					{{ n }}
-				</time>
-			</div>
-		</div>
-	</div>
-
+  <div class="calendar">
+    <div class="calendar-month">
+      <div
+        class="calendar-month__item"
+        v-for="(month, i) in currentMonth"
+        :key="i"
+      >
+        <input
+          class="calendar-month__item-radio"
+          type="radio"
+          :id="i"
+          name="months"
+          :checked="checkedMonth"
+          :value="month"
+          v-model="choisedMonth"
+        />
+        <label class="calendar-month__item-label" :for="i">{{ month }}</label>
+      </div>
+    </div>
+    <div class="calendar-days">
+      <div
+        v-for="(n, i) in quantityDays"
+        :key="i"
+        class="calendar-days__day-wrapper"
+      >
+        <time
+          class="calendar-days__day-item"
+          :class="{
+            previous: isToday(n) === false,
+            today: isToday(n),
+            choised: date === dateTime(n),
+          }"
+          :datetime="dateTime(n)"
+          @click="findHistory(n)"
+        >
+          {{ n }}
+        </time>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-	export default {
-		props: {
-			card: {
-				type: Object,
-				required: true
-			},
-		},
+import { ref, computed, onMounted } from "vue";
 
-		data() {
-			return {
-				date: '',
-				choisedMonth: null,
-			}
-		},
+export default {
+  props: {
+    card: {
+      type: Object,
+      required: true,
+    },
+  },
 
-		methods: {
-			isToday(n) {
-				if (n === this.currentDate.getDate() && this.choisedMonth === this.monthName[this.numOfMonth]) {
-					return true
-				}
-				if (new Date(this.dateTime(n)).getTime() < this.currentDate.getTime()) {
-					return false
-				}
-			},
+  setup({ card }, { emit }) {
+    const date = ref("");
+    const choisedMonth = ref(null);
 
-			dateTime(n) {
-				const year = this.currentDate.getFullYear()
-				const month = (this.monthName.indexOf(this.choisedMonth) + 1).toString().padStart(2, '0')
-				const day = n.toString().padStart(2, '0')
-				return `${year}-${month}-${day}`
-			},
+    const monthName = [
+      "Янв.",
+      "Фефр.",
+      "Март",
+      "Апр.",
+      "Май",
+      "Июнь",
+      "Июль",
+      "Авг.",
+      "Сент.",
+      "Окт.",
+      "Нояб.",
+      "Дек.",
+    ];
 
-			findHistory(n) {
-				this.date = this.dateTime(n)
-				if (new Date(this.date).getTime() <= this.currentDate) {
-					this.$emit('fetchHistoryOfWeather', this.card.location.name, this.date)
-				}
-			},
+    const currentDate = new Date();
+    const numOfMonth = currentDate.getMonth();
 
-			defaultDate() {
-				this.choisedMonth = this.monthName[this.numOfMonth];
-			}
+    const currentMonth = computed(() =>
+      monthName.filter((m) => monthName.indexOf(m) <= numOfMonth)
+    );
 
-		},
+    const checkedMonth = computed(() => {
+      if (monthName[numOfMonth]) {
+        return true;
+      }
+    });
 
-		mounted() {
-			this.defaultDate()
-		},
+    const quantityDays = computed(() => {
+      if (
+        choisedMonth.value === "Февр." &&
+        currentDate.getFullYear() % 4 === 0
+      ) {
+        return 29;
+      } else {
+        switch (choisedMonth.value) {
+          case "Апр.":
+          case "Июнь":
+          case "Сент.":
+          case "Нояб.":
+            return 30;
+          case "Фефр.":
+            return 28;
+          default:
+            return 31;
+        }
+      }
+    });
 
-		computed: {
-			monthName() {
-				return ['Янв.', 'Фефр.', 'Март', 'Апр.', 'Май', 'Июнь', 'Июль', 'Авг.', 'Сент.', 'Окт.', 'Нояб.', 'Дек.']
-			},
+    const defaultDate = () => {
+      choisedMonth.value = monthName[numOfMonth];
+      date.value = dateTime(currentDate.getDate());
+    };
 
-			currentDate() {
-				return new Date()
-			},
+    const dateTime = (n) => {
+      const year = currentDate.getFullYear();
+      const month = (monthName.indexOf(choisedMonth.value) + 1)
+        .toString()
+        .padStart(2, "0");
+      const day = n.toString().padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
 
-			numOfMonth() {
-				return this.currentDate.getMonth()
-			},
+    const isToday = (n) => {
+      if (
+        n === currentDate.getDate() &&
+        choisedMonth.value === monthName[numOfMonth]
+      ) {
+        return true;
+      }
+      if (new Date(dateTime(n)).getTime() < currentDate.getTime()) {
+        return false;
+      }
+    };
 
-			currentMonth() {
-				return this.monthName.filter(m => this.monthName.indexOf(m) <= this.numOfMonth)
-			},
+    const findHistory = (n) => {
+      if (new Date(dateTime(n)).getTime() > currentDate) {
+        return;
+      }
+      if (date.value === dateTime(n)) {
+        return;
+      }
+      date.value = dateTime(n);
+      if (new Date(date.value) <= currentDate) {
+        emit("fetchHistoryOfWeather", card.location.name, date.value);
+      }
+    };
 
-			checkedMonth() {
-				if (this.monthName[this.numOfMonth]) {
-					return true
-				}
-			},
+    onMounted(() => {
+      defaultDate();
+    });
 
-			quantityDays() {
-				if (this.choisedMonth === 'Февр.' && (this.currentDate.getFullYear()) % 4 === 0) {
-					return 29;
-				} else {
-					switch(this.choisedMonth) {
-						case 'Апр.':
-						case 'Июнь':
-						case 'Сент.':
-						case 'Нояб.':
-							return 30;
-						case 'Фефр.':
-							return 28;
-						default: 
-							return 31;
-					}
-				}
-			},
-
-		},
-
-	}
+    return {
+      date,
+      choisedMonth,
+      currentMonth,
+      checkedMonth,
+      isToday,
+      dateTime,
+      findHistory,
+      quantityDays,
+    };
+  },
+};
 </script>
 
 <style lang="sass" scoped>
 
-.previous-month,
 .previous
 	background-color: hsl(0, 0%, 80%)
 
@@ -152,7 +172,7 @@
 
 .choised
 	background-color: yellow
-	
+
 .calendar
 	width: 700px
 	height: 450px
@@ -163,7 +183,7 @@
 	overflow: hidden
 	font-size: $x-small
 
-	&-month 
+	&-month
 		display: flex
 		justify-content: center
 
@@ -208,7 +228,7 @@
 				justify-content: center
 				width: calc(100%/7)
 				height: 65px
-			
+
 			&-item
 				display: flex
 				align-items: center
@@ -224,5 +244,4 @@
 					cursor: pointer
 					transition: 0.4s
 					background-color: yellow
-
 </style>

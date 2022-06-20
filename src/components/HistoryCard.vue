@@ -56,11 +56,8 @@ import { computed } from 'vue';
 
 		setup(props) {
 			const maxTemp = computed(() => formatedTemperature(props.card.forecast.forecastday[0].day.maxtemp_c))
-
 			const minTemp = computed(() => formatedTemperature(props.card.forecast.forecastday[0].day.mintemp_c))
-
 			const maxWindSpeed = computed(() => windSpeedFormated(props.card.forecast.forecastday[0].day.maxwind_kph))
-
 			const dateSelected = computed(() => {
 				const year = new Date(props.card.forecast.forecastday[0].date).getFullYear()
 				const month = (new Date(props.card.forecast.forecastday[0].date).getMonth() + 1).toString().padStart(2, '0')

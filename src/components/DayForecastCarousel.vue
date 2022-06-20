@@ -82,9 +82,7 @@ import { numOfDay, dateOfDay, dayOfDay, monthOfDay } from '@/plugins/forecastDat
 
 		setup() {
 			const maxWindSpeed = (day) => windSpeedFormated(day.day.maxwind_kph)
-
 			const averageTemp = (day) => formatedTemperature(day.day.avgtemp_c)
-
       const minTemp = (day) => formatedTemperature(day.day.mintemp_c)
 
 			return {
