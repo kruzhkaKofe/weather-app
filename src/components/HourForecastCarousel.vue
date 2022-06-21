@@ -3,8 +3,11 @@
 	 	class="carousel"
 	 	:slidesPerView="8"
 		:spaceBetween="0"
-		:navigation="true" 
 		:modules="modules"
+		:navigation="{
+			nextEl: '.swiper-button-next',
+			prevEl: '.swiper-button-prev',
+		}"
 	>
 		<swiper-slide 
 			class="carousel-slide" 
@@ -32,6 +35,8 @@
 				<strong>{{ hour.temp_c }}</strong>
 			</p>
 		</swiper-slide>
+		<div class="swiper-button-next"></div>
+		<div class="swiper-button-prev"></div>
 	</swiper>
 </template>
 
@@ -47,23 +52,35 @@
 			SwiperSlide,
 		},
 
-		data() {
-			return {
-				modules: [Navigation],
-			}
-		},
-
 		props: {
-      card: {
+			card: {
 				type: Object,
 				required: true
 			}
     },
-		
+
+		setup() {
+			const modules = [Navigation]
+
+			return {
+				modules
+			}
+		},
 	}
 </script>
 
 <style lang="sass" scoped>
+
+.swiper-button-next,
+.swiper-button-prev
+	color: black
+	background-color: rgba(255, 255, 255, 0.5)
+	width: 50px
+	height: 50px
+	border-radius: 50%
+
+	&::after
+		font-size: $medium
 
 .carousel
 	height: 150px

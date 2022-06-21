@@ -5,8 +5,11 @@
 			class="day-carousel"
 			:slidesPerView="2"
 			:spaceBetween="80"
-			:navigation="true" 
 			:modules="modules"
+			:navigation="{
+				nextEl: '.swiper-button-next',
+				prevEl: '.swiper-button-prev',
+			}"
 		>
 			<swiper-slide
 				class="day-carousel-slide" 
@@ -48,9 +51,10 @@
 					</div>
 				</div>
 			</swiper-slide>
+			<div class="swiper-button-next"></div>
+			<div class="swiper-button-prev"></div>
 		</swiper>
 	</div>
-	
 </template>
 
 <script>
@@ -67,12 +71,6 @@ import { numOfDay, dateOfDay, dayOfDay, monthOfDay } from '@/plugins/forecastDat
 			SwiperSlide,
 		},
 
-		setup() {
-			return {
-				modules: [Navigation],
-			};
-  	},
-
 		props: {
 			card: {
 				type: Object,
@@ -81,6 +79,7 @@ import { numOfDay, dateOfDay, dayOfDay, monthOfDay } from '@/plugins/forecastDat
 		},
 
 		setup() {
+			const modules = [Navigation]
 			const maxWindSpeed = (day) => windSpeedFormated(day.day.maxwind_kph)
 			const averageTemp = (day) => formatedTemperature(day.day.avgtemp_c)
       const minTemp = (day) => formatedTemperature(day.day.mintemp_c)
@@ -92,7 +91,8 @@ import { numOfDay, dateOfDay, dayOfDay, monthOfDay } from '@/plugins/forecastDat
 				dayOfDay, 
 				monthOfDay,
 				averageTemp, 
-				minTemp
+				minTemp,
+				modules
 			}
 		},
 
@@ -100,6 +100,17 @@ import { numOfDay, dateOfDay, dayOfDay, monthOfDay } from '@/plugins/forecastDat
 </script>
 
 <style lang="sass" scoped>
+
+.swiper-button-next,
+.swiper-button-prev
+	color: black
+	background-color: rgba(255, 255, 255, 0.5)
+	width: 50px
+	height: 50px
+	border-radius: 50%
+
+	&::after
+		font-size: $medium
 
 .day-forecast
 	height: 350px

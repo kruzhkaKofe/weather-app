@@ -142,6 +142,7 @@ import { ref, computed, onMounted } from 'vue'
 
 			onMounted(() => {
 				defaultDate()
+				console.log(new Date(dateTime(1)).getDay())
 			})
 
 			return {
@@ -234,7 +235,7 @@ import { ref, computed, onMounted } from 'vue'
 				align-items: center
 				justify-content: center
 				height: 47px
-				width: 95%
+				width: 90%
 				border: 1px solid black
 				border-radius: 6px
 				font-size: $small
