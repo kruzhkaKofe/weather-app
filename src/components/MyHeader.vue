@@ -19,7 +19,6 @@
 
 <script>
 import SearchForm from "@/components/SearchForm";
-import { onMounted, ref } from "vue";
 
 export default {
   components: {

@@ -20,10 +20,19 @@
 				<label class="calendar-month__item-label" :for="i">{{ month }}</label>
 			</div>
 		</div>
+		<div class="week">
+			<span class="week__day secondary-text" v-for="day in week" :key="day">{{ day }}</span>
+		</div>
 		<div class="calendar-days">
 			<div
-				v-for="(n, i) in quantityDays"
-				:key="i"
+				class="calendar-days__day-wrapper" 
+				v-for="n in offset" 
+				:key="n"
+			>
+			</div>
+			<div
+				v-for="n in quantityDays"
+				:key="dateTime(n)"
 				class="calendar-days__day-wrapper"
 			>	
 				<time 
@@ -60,6 +69,7 @@ import { ref, computed, onMounted } from 'vue'
 			const date = ref('')
 			const choisedMonth = ref(null)
 
+			const week = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС']
 			const monthName = ['Янв.', 'Фефр.', 'Март', 'Апр.', 'Май', 'Июнь', 'Июль', 'Авг.', 'Сент.', 'Окт.', 'Нояб.', 'Дек.']
 		
 			const currentDate = new Date()
@@ -89,6 +99,11 @@ import { ref, computed, onMounted } from 'vue'
 							return 31;
 					}
 				}
+			})
+
+			const offset = computed(() => {
+				const vol = new Date(dateTime(1)).getDay()
+				return vol > 0 ? (vol - 1) : (vol + 6)
 			})
 
 			const defaultDate = () => {
@@ -131,6 +146,7 @@ import { ref, computed, onMounted } from 'vue'
 
 			return {
 				date,
+				week,
 				choisedMonth,
 				currentMonth,
 				checkedMonth,
@@ -138,6 +154,7 @@ import { ref, computed, onMounted } from 'vue'
 				dateTime,
 				findHistory,
 				quantityDays,
+				offset,
 			}
 		}
 	}
@@ -160,7 +177,9 @@ import { ref, computed, onMounted } from 'vue'
 	padding: 20px
 	border-radius: $default
 	background-color: $main
-	display: inline-block
+	display: flex
+	flex-direction: column
+	align-items: center
 	overflow: hidden
 	font-size: $x-small
 
@@ -171,7 +190,7 @@ import { ref, computed, onMounted } from 'vue'
 		&__item
 			display: inline-block
 			float: left
-			margin-bottom: 40px
+			margin-bottom: 25px
 
 			&:first-child label
 				border-radius: 6px 0 0 6px
@@ -208,16 +227,16 @@ import { ref, computed, onMounted } from 'vue'
 				align-items: center
 				justify-content: center
 				width: calc(100%/7)
-				height: 65px
+				height: 50px
 			
 			&-item
 				display: flex
 				align-items: center
 				justify-content: center
-				height: 60px
-				width: 60px
+				height: 47px
+				width: 95%
 				border: 1px solid black
-				border-radius: 50%
+				border-radius: 6px
 				font-size: $small
 				font-weight: 700
 
@@ -225,5 +244,18 @@ import { ref, computed, onMounted } from 'vue'
 					cursor: pointer
 					transition: 0.4s
 					background-color: yellow
+					
+.week 
+	display: flex
+	align-items: center
+	width: 100%
+	margin-bottom: 15px
+
+	&__day
+		display: block
+		text-align: center
+		width: calc(100%/7)
+		font-weight: bold
+
 
 </style>

@@ -1,13 +1,13 @@
 <template>
   <div class="inner-wrapper--wide">
     <div class="inner-wrapper">
-      <my-header @findWeatherInCity="fetchHistory" />
+      <my-header @findWeatherInCity="fetchHistory"/>
     </div>
   </div>
   <div class="inner-wrapper">
     <nav-breadcrumbs :card="card" />
     <div class="card-wrapper">
-      <my-calendar :card="card" @fetchHistoryOfWeather="fetchHistory" />
+      <my-calendar :card="card" @fetchHistoryOfWeather="fetchHistory"/>
       <history-card :card="card" />
     </div>
   </div>

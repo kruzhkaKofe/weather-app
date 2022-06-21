@@ -27,7 +27,7 @@ export default {
 
     onMounted(() => {
       name.value = "Izhevsk";
-      date.value = currentDate;
+      date.value = currentDate();
       findWeather();
     });
 
