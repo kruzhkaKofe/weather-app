@@ -40,33 +40,20 @@
 	</swiper>
 </template>
 
-<script>
+<script setup>
 	import { Swiper, SwiperSlide } from "swiper/vue";
 	import { Navigation } from "swiper";
 	import 'swiper/css';
 	import "swiper/css/navigation";
 
-	export default {
-		components: {
-			Swiper,
-			SwiperSlide,
+	const props = defineProps({
+		card: {
+			type: Object,
+			required: true,
 		},
+	})
 
-		props: {
-			card: {
-				type: Object,
-				required: true
-			}
-    },
-
-		setup() {
-			const modules = [Navigation]
-
-			return {
-				modules
-			}
-		},
-	}
+	const modules = [Navigation]
 </script>
 
 <style lang="sass" scoped>

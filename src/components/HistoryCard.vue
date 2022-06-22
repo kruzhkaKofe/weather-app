@@ -37,42 +37,28 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import HourForecastCarousel from '@/components/HourForecastCarousel';
 import { formatedTemperature, windSpeedFormated } from '@/plugins/naturalCondition'
 import { computed } from 'vue';
 
-	export default {
-    components: {
-      HourForecastCarousel,
-    },
-
-    props: {
-      card: {
-        type: Object,
-        required: true,
-      },
-    },
-
-		setup(props) {
-			const maxTemp = computed(() => formatedTemperature(props.card.forecast.forecastday[0].day.maxtemp_c))
-			const minTemp = computed(() => formatedTemperature(props.card.forecast.forecastday[0].day.mintemp_c))
-			const maxWindSpeed = computed(() => windSpeedFormated(props.card.forecast.forecastday[0].day.maxwind_kph))
-			const dateSelected = computed(() => {
-				const year = new Date(props.card.forecast.forecastday[0].date).getFullYear()
-				const month = (new Date(props.card.forecast.forecastday[0].date).getMonth() + 1).toString().padStart(2, '0')
-				const date = (new Date(props.card.forecast.forecastday[0].date).getDate()).toString().padStart(2, '0')
-				return `${date}.${month}.${year}`
-			})
-			
-			return {
-				maxTemp,
-				minTemp,
-				maxWindSpeed,
-				dateSelected
-			}
+	const props = defineProps({
+		card: {
+			type: Object,
+			required: true,
 		},
-	}
+	})
+
+	const maxTemp = computed(() => formatedTemperature(props.card.forecast.forecastday[0].day.maxtemp_c))
+	const minTemp = computed(() => formatedTemperature(props.card.forecast.forecastday[0].day.mintemp_c))
+	const maxWindSpeed = computed(() => windSpeedFormated(props.card.forecast.forecastday[0].day.maxwind_kph))
+	const dateSelected = computed(() => {
+		const year = new Date(props.card.forecast.forecastday[0].date).getFullYear()
+		const month = (new Date(props.card.forecast.forecastday[0].date).getMonth() + 1).toString().padStart(2, '0')
+		const date = (new Date(props.card.forecast.forecastday[0].date).getDate()).toString().padStart(2, '0')
+		return `${date}.${month}.${year}`
+	})
+
 </script>
 
 <style lang="sass" scoped>

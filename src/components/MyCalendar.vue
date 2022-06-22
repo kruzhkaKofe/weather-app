@@ -53,112 +53,96 @@
 
 </template>
 
-<script>
+<script setup>
 import { ref, computed, onMounted } from 'vue'
 
-	export default {
-		props: {
-			card: {
-				type: Object,
-				required: true
-			},
+	const props = defineProps({
+		card: {
+			type: Object,
+			required: true,
 		},
+	})
 
-		setup(props, { emit }) {
+	const emit = defineEmits(['fetchHistoryOfWeather'])
 
-			const date = ref('')
-			const choisedMonth = ref(null)
+	const date = ref('')
+	const choisedMonth = ref(null)
 
-			const week = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС']
-			const monthName = ['Янв.', 'Фефр.', 'Март', 'Апр.', 'Май', 'Июнь', 'Июль', 'Авг.', 'Сент.', 'Окт.', 'Нояб.', 'Дек.']
-		
-			const currentDate = new Date()
-			const numOfMonth = currentDate.getMonth()
+	const week = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС']
+	const monthName = ['Янв.', 'Фефр.', 'Март', 'Апр.', 'Май', 'Июнь', 'Июль', 'Авг.', 'Сент.', 'Окт.', 'Нояб.', 'Дек.']
 
-			const currentMonth = computed(() => monthName.filter(m => monthName.indexOf(m) <= numOfMonth))
+	const currentDate = new Date()
+	const numOfMonth = currentDate.getMonth()
 
-			const checkedMonth = computed(() => {
-				if (monthName[numOfMonth]) {
-					return true
-				}
-			})
-			
-			const quantityDays = computed(() => {
-				if (choisedMonth.value === 'Февр.' && (currentDate.getFullYear()) % 4 === 0) {
-					return 29;
-				} else {
-					switch(choisedMonth.value) {
-						case 'Апр.':
-						case 'Июнь':
-						case 'Сент.':
-						case 'Нояб.':
-							return 30;
-						case 'Фефр.':
-							return 28;
-						default: 
-							return 31;
-					}
-				}
-			})
+	const currentMonth = computed(() => monthName.filter(m => monthName.indexOf(m) <= numOfMonth))
 
-			const offset = computed(() => {
-				const vol = new Date(dateTime(1)).getDay()
-				return vol > 0 ? (vol - 1) : (vol + 6)
-			})
-
-			const defaultDate = () => {
-				choisedMonth.value = monthName[numOfMonth];
-				date.value = dateTime(currentDate.getDate())
-			}
-
-			const dateTime = (n) => {
-				const year = currentDate.getFullYear()
-				const month = (monthName.indexOf(choisedMonth.value) + 1).toString().padStart(2, '0')
-				const day = n.toString().padStart(2, '0')
-				return `${year}-${month}-${day}`
-			}
-
-			const isToday = (n) => {
-				if (n === currentDate.getDate() && choisedMonth.value === monthName[numOfMonth]) {
-					return true
-				}
-				if (new Date(dateTime(n)).getTime() < currentDate.getTime()) {
-					return false
-				}
-			}
-
-			const findHistory = (n) => {
-				if (new Date(dateTime(n)).getTime() > currentDate) {
-					return 
-				}
-				if (date.value === dateTime(n)) {
-					return
-				}
-				date.value = dateTime(n)	
-				if (new Date(date.value) <= currentDate) {
-					emit('fetchHistoryOfWeather', props.card.location.name, date.value)
-				}
-			}
-
-			onMounted(() => {
-				defaultDate()
-				console.log(new Date(dateTime(1)).getDay())
-			})
-
-			return {
-				date,
-				week,
-				choisedMonth,
-				currentMonth,
-				checkedMonth,
-				isToday,
-				dateTime,
-				findHistory,
-				quantityDays,
-				offset,
+	const checkedMonth = computed(() => {
+		if (monthName[numOfMonth]) {
+			return true
+		}
+	})
+	
+	const quantityDays = computed(() => {
+		if (choisedMonth.value === 'Февр.' && (currentDate.getFullYear()) % 4 === 0) {
+			return 29;
+		} else {
+			switch(choisedMonth.value) {
+				case 'Апр.':
+				case 'Июнь':
+				case 'Сент.':
+				case 'Нояб.':
+					return 30;
+				case 'Фефр.':
+					return 28;
+				default: 
+					return 31;
 			}
 		}
+	})
+
+	const offset = computed(() => {
+		const vol = new Date(dateTime(1)).getDay()
+		return vol > 0 ? (vol - 1) : (vol + 6)
+	})
+
+	const defaultDate = () => {
+		choisedMonth.value = monthName[numOfMonth];
+		date.value = dateTime(currentDate.getDate())
 	}
+
+	const dateTime = (n) => {
+		const year = currentDate.getFullYear()
+		const month = (monthName.indexOf(choisedMonth.value) + 1).toString().padStart(2, '0')
+		const day = n.toString().padStart(2, '0')
+		return `${year}-${month}-${day}`
+	}
+
+	const isToday = (n) => {
+		if (n === currentDate.getDate() && choisedMonth.value === monthName[numOfMonth]) {
+			return true
+		}
+		if (new Date(dateTime(n)).getTime() < currentDate.getTime()) {
+			return false
+		}
+	}
+
+	const findHistory = (n) => {
+		if (new Date(dateTime(n)).getTime() > currentDate) {
+			return 
+		}
+		if (date.value === dateTime(n)) {
+			return
+		}
+		date.value = dateTime(n)	
+		if (new Date(date.value) <= currentDate) {
+			emit('fetchHistoryOfWeather', props.card.location.name, date.value)
+		}
+	}
+
+	onMounted(() => {
+		defaultDate()
+	})
+
 </script>
 
 <style lang="sass" scoped>

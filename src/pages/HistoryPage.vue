@@ -13,7 +13,7 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import MyHeader from "@/components/MyHeader";
 import NavBreadcrumbs from "@/components/NavBreadcrumbs";
 import MyCalendar from "@/components/MyCalendar";
@@ -21,39 +21,21 @@ import HistoryCard from "@/components/HistoryCard";
 import { loadHistory } from "@/plugins/api.js";
 import { ref } from 'vue';
 
-export default {
-  components: {
-    MyHeader,
-    NavBreadcrumbs,
-    MyCalendar,
-    HistoryCard,
-  },
+  const card = ref({})
 
-  setup() {
-    const card = ref({})
-
-    const fetchHistory = async (name, date) => {
-      try {
-        const res = await loadHistory(name, date);
-        card.value = res.data;
-        card.value.forecast.forecastday[0].hour.forEach((h) => {
-          h.time = h.time.split("").slice(11).join("");
-          h.temp_c = Math.round(h.temp_c);
-        });
-        console.log(card.value);
-      } catch (e) {
-        console.log(e);
-      }
+  const fetchHistory = async (name, date) => {
+    try {
+      const res = await loadHistory(name, date);
+      card.value = res.data;
+      card.value.forecast.forecastday[0].hour.forEach((h) => {
+        h.time = h.time.split("").slice(11).join("");
+        h.temp_c = Math.round(h.temp_c);
+      });
+      console.log(card.value);
+    } catch (e) {
+      console.log(e);
     }
-
-    return {
-      card,
-      fetchHistory,
-    }
-  },
-
-
-};
+  }
 </script>
 
 <style lang="sass" scoped>

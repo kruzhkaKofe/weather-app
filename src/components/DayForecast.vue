@@ -147,20 +147,18 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { moonPhases, indexUV, daylong } from "@/plugins/celestialBody";
 import { windDirection, windSpeedFormated, mmPressure, dayPart, filteredHours, formatedTemperature } from "@/plugins/naturalCondition";
 import { week, numOfDay, dateOfDay, dayOfDay, monthOfDay } from "@/plugins/forecastDate";
 
-export default {
-  props: {
+ const props = defineProps({
     card: {
       type: Object,
       required: true,
     },
-  },
+  })
 
-  setup() {
     const sunrise = (day) => daylong(day.astro.sunrise, day.astro.sunset)[0]
     const sunset = (day) => daylong(day.astro.sunrise, day.astro.sunset)[1]
     const dayLong = (day) => daylong(day.astro.sunrise, day.astro.sunset)[2]
@@ -178,27 +176,6 @@ export default {
       }
     };
 
-    return {
-      sunrise,
-      sunset,
-      dayLong,
-      pressure,
-      moonImage,
-      phaseOfMoon,
-      uvIndex,
-      windDirImage,
-      windDirName,
-      filteredHours,
-      dateOfDay,
-      dayOfDay,
-      weekendCheck,
-      monthOfDay,
-      windSpeedFormated,
-      feelslikeTemp,
-      dayPart,
-    };
-  },
-};
 </script>
 
 <style lang="sass" scoped>

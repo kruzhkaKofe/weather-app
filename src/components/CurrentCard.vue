@@ -45,43 +45,25 @@
   </div>
 </template>
 
-<script>
-import HourForecastCarousel from '@/components/HourForecastCarousel';
-import { windDirection, windSpeedFormated, mmPressure, timeWithoutData, formatedTemperature } from '@/plugins/naturalCondition'
-import { computed } from 'vue'
+<script setup>
+  import HourForecastCarousel from '@/components/HourForecastCarousel';
+  import { windDirection, windSpeedFormated, mmPressure, timeWithoutData, formatedTemperature } from '@/plugins/naturalCondition'
+  import { computed } from 'vue'
 
-	export default {
-    components: {
-      HourForecastCarousel,
+  const props = defineProps({
+    card: {
+      type: Object,
+      required: true,
     },
+  })
 
-    props: {
-      card: {
-        type: Object,
-        required: true,
-      },
-    },
-
-    setup({ card }) {
-      const windSpeed = windSpeedFormated(card.current.wind_kph)
-      const pressureMercury = mmPressure(card.current.pressure_mb)
-      const localtimeWithoutData = timeWithoutData(card.location.localtime)
-      const windDirImage = windDirection(card.current.wind_dir)[0]
-      const windDirName = windDirection(card.current.wind_dir)[1]
-      const feelsLikeTemp = computed(() => formatedTemperature(card.current.feelslike_c))
-      const currentTemp = computed(() => formatedTemperature(card.current.temp_c))
-
-      return {
-        windDirName,
-        windDirImage,
-        windSpeed,
-        pressureMercury,
-        localtimeWithoutData,
-        feelsLikeTemp,
-        currentTemp
-      }
-    },
-	}
+  const windSpeed = windSpeedFormated(props.card.current.wind_kph)
+  const pressureMercury = mmPressure(props.card.current.pressure_mb)
+  const localtimeWithoutData = timeWithoutData(props.card.location.localtime)
+  const windDirImage = windDirection(props.card.current.wind_dir)[0]
+  const windDirName = windDirection(props.card.current.wind_dir)[1]
+  const feelsLikeTemp = computed(() => formatedTemperature(props.card.current.feelslike_c))
+  const currentTemp = computed(() => formatedTemperature(props.card.current.temp_c))
 </script>
 
 <style lang="sass" scoped>

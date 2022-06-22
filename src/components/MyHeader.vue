@@ -17,24 +17,14 @@
   </header>
 </template>
 
-<script>
+<script setup>
 import SearchForm from "@/components/SearchForm";
 
-export default {
-  components: {
-    SearchForm,
-  },
+ const emit = defineEmits(['findWeatherInCity'])
 
-  setup(_, { emit }) {
-    const findWeather = (name, date) => {
-      emit("findWeatherInCity", name, date);
-    };
-
-    return {
-      findWeather,
-    };
-  },
-};
+  const findWeather = (name, date) => {
+    emit("findWeatherInCity", name, date);
+  };
 </script>
 
 <style lang="sass" scoped>

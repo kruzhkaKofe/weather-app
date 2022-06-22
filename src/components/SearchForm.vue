@@ -5,38 +5,32 @@
   </form>
 </template>
 
-<script>
+<script setup>
 import { onMounted, ref } from "vue";
 
-export default {
-  setup(_, { emit }) {
-    const name = ref("");
-    const date = ref("");
+  const emit = defineEmits(['findWeatherInCity'])
 
-    const currentDate = () => {
-      const year = new Date().getFullYear();
-      const month = (new Date().getMonth() + 1).toString().padStart(2, "0");
-      const date = new Date().getDate().toString().padStart(2, "0");
-      return `${date}.${month}.${year}`;
-    };
+  const name = ref("");
+  const date = ref("");
 
-    const findWeather = () => {
-      emit("findWeatherInCity", name.value, date.value);
-      name.value = "";
-    };
+  const currentDate = () => {
+    const year = new Date().getFullYear();
+    const month = (new Date().getMonth() + 1).toString().padStart(2, "0");
+    const date = new Date().getDate().toString().padStart(2, "0");
+    return `${date}.${month}.${year}`;
+  };
 
-    onMounted(() => {
-      name.value = "Izhevsk";
-      date.value = currentDate();
-      findWeather();
-    });
+  const findWeather = () => {
+    emit("findWeatherInCity", name.value, date.value);
+    name.value = "";
+  };
 
-    return {
-      name,
-      findWeather,
-    };
-  },
-};
+  onMounted(() => {
+    name.value = "Izhevsk";
+    date.value = currentDate();
+    findWeather();
+  });
+
 </script>
 
 <style lang="sass" scoped>

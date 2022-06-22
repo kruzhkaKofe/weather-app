@@ -57,7 +57,7 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation } from "swiper";
 import 'swiper/css';
@@ -65,38 +65,18 @@ import "swiper/css/navigation";
 import { windSpeedFormated, formatedTemperature } from "@/plugins/naturalCondition";
 import { numOfDay, dateOfDay, dayOfDay, monthOfDay } from '@/plugins/forecastDate'
 
-	export default {
-		components: {
-			Swiper,
-			SwiperSlide,
+	const props = defineProps({
+		card: {
+			type: Object,
+			required: true,
 		},
+	})
 
-		props: {
-			card: {
-				type: Object,
-				required: true
-			}
-		},
-
-		setup() {
-			const modules = [Navigation]
-			const maxWindSpeed = (day) => windSpeedFormated(day.day.maxwind_kph)
-			const averageTemp = (day) => formatedTemperature(day.day.avgtemp_c)
-      const minTemp = (day) => formatedTemperature(day.day.mintemp_c)
-
-			return {
-				maxWindSpeed,
-				numOfDay, 
-				dateOfDay, 
-				dayOfDay, 
-				monthOfDay,
-				averageTemp, 
-				minTemp,
-				modules
-			}
-		},
-
-	}
+	const modules = [Navigation]
+	const maxWindSpeed = (day) => windSpeedFormated(day.day.maxwind_kph)
+	const averageTemp = (day) => formatedTemperature(day.day.avgtemp_c)
+	const minTemp = (day) => formatedTemperature(day.day.mintemp_c)
+	
 </script>
 
 <style lang="sass" scoped>
