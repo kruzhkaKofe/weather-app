@@ -4,6 +4,7 @@
       <my-header @findWeatherInCity="fetchWeather" />
     </div>
   </div>
+  <error-catcher :error="error"/>
   <div v-if="card.location" class="inner-wrapper">
     <nav-breadcrumbs :card="card" />
     <div class="card-wrapper">
@@ -16,10 +17,11 @@
     <day-forecast-carousel :card="card" />
     <div class="some-cards">
       <sun-card :card="card" />
-      <div class="some-cards__div">some content...</div>
+      <div class="some-cards__div">Какой-то контент...</div>
     </div>
     <day-forecast :card="card" />
   </div>
+  
 </template>
 
 <script setup>
@@ -31,14 +33,17 @@ import MapCard from "@/components/MapCard";
 import DayForecastCarousel from "@/components/DayForecastCarousel";
 import SunCard from "@/components/SunCard";
 import DayForecast from "@/components/DayForecast";
+import ErrorCatcher from "@/components/ErrorCatcher"
 import { loadWeather } from "@/plugins/api.js";
 import { averageWindSpeed, formatedTemperature } from "@/plugins/naturalCondition";
 import { ref } from "vue";
 
   const card = ref({})
+  const error = ref(false)
 
   const fetchWeather = async (name) => {
     try {
+      error.value = false
       const res = await loadWeather(name);
       card.value = res.data;
       card.value.forecast.forecastday.forEach((day) => {
@@ -48,8 +53,9 @@ import { ref } from "vue";
         });
       });
       console.log(card.value);
-    } catch (e) {
-      console.log(e);
+    } catch {
+      error.value = true
+      card.value = {}
     }
   };
 
