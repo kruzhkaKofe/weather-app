@@ -1,5 +1,10 @@
 # weather-app
 
+issues: 
+1) Anchors links don't work 
+2) Map works incorrectly
+3) Block without usefull content at Home page
+
 ## Project setup
 ```
 yarn install
