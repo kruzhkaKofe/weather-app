@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { watch, isRef, toRefs, toRef } from "vue";
 
 const props = defineProps({
   card: {
@@ -12,17 +12,17 @@ const props = defineProps({
   },
 });
 
-const lat = props.card.location.lat;
-const lon = props.card.location.lon;
+const lat = toRef(props.card.location.lat);
+const lon = toRef(props.card.location.lon);
 
 function init() {
   const myMap = new ymaps.Map("map", {
-    center: [lat, lon],
+    center: [lat._object, lon._object],
     zoom: 9,
   });
 
   const marker = new ymaps.Placemark(
-    [lat, lon],
+    [lat._object, lon._object],
     {},
     { preset: "islands#redDotIcon" }
   );
@@ -32,6 +32,14 @@ function init() {
 
 ymaps.ready(init);
 
+watch(
+  lat,
+  (lat, prevLat) => {
+    // ymaps.ready(init);
+    console.log(lat);
+  },
+  { deep: true }
+);
 </script>
 
 <style lang="sass" scoped>
@@ -39,6 +47,5 @@ ymaps.ready(init);
 	width: 700px
 	height: 450px
 	border-radius: $default
-	border: solid $main 3px
 	overflow: hidden
 </style>

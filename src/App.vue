@@ -4,9 +4,7 @@
   </div>
 </template>
 
-<script>
-
-</script>
+<script></script>
 
 <style lang="sass">
 
@@ -28,7 +26,7 @@ body
   flex-direction: column
   justify-content: center
   align-items: center
-  
+
 .inner-wrapper
   max-width: 1440px
   width: 100%
@@ -41,5 +39,4 @@ body
 
 .secondary-text
   opacity: 0.7
-
 </style>

@@ -11,7 +11,7 @@
       </router-link>
     </div>
     <router-link class="header__history" to="/history">
-    История погоды
+      История погоды
     </router-link>
     <search-form @findWeatherInCity="findWeather" />
   </header>
@@ -20,34 +20,29 @@
 <script setup>
 import SearchForm from "@/components/SearchForm";
 
- const emit = defineEmits(['findWeatherInCity'])
+const emit = defineEmits(["findWeatherInCity"]);
 
-  const findWeather = (name, date) => {
-    emit("findWeatherInCity", name, date);
-  };
+const findWeather = (name, date) => {
+  emit("findWeatherInCity", name, date);
+};
 </script>
 
 <style lang="sass" scoped>
-
 .header
 	display: flex
 	align-items: center
 	justify-content: space-between
 	padding: 15px 0
-
 	&__logo
-
 		&-link
 			display: flex
 			align-items: center
 			font-size: $medium
 			font-weight: bold
 			color: black
-
 		&-img
 			@include logo-icon
 			margin-right: 10px
-
 	&__history
 		padding: 5px 15px
 		font-size: $small

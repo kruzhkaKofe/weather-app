@@ -1,12 +1,10 @@
 <template>
-	<div class="facts-card">
-		<slot></slot>
-	</div>
+  <div class="facts-card">
+    <slot></slot>
+  </div>
 </template>
 
-<script>
-	
-</script>
+<script></script>
 
 <style lang="sass" scoped>
 
@@ -20,5 +18,4 @@
 	margin-bottom: 20px
 	display: flex
 	align-items: center
-
 </style>

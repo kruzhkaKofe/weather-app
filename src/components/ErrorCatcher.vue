@@ -1,18 +1,16 @@
 <template>
-	<div v-if="error" class="inner-wrapper error">
-		<h1>Ooops! Something went wrong.</h1>
-	</div>
+  <div v-if="error" class="inner-wrapper error">
+    <h1>Ooops! Something went wrong.</h1>
+  </div>
 </template>
 
 <script setup>
-
 const props = defineProps({
   error: {
     type: Boolean,
-		default: false
+    default: false,
   },
 });
-
 </script>
 
 <style lang="sass" scoped>

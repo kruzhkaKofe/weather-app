@@ -4,7 +4,7 @@
       <my-header @findWeatherInCity="fetchWeather" />
     </div>
   </div>
-  <error-catcher :error="error"/>
+  <error-catcher :error="error" />
   <div v-if="card.location" class="inner-wrapper">
     <nav-breadcrumbs :card="card" />
     <div class="card-wrapper">
@@ -21,7 +21,6 @@
     </div>
     <day-forecast :card="card" />
   </div>
-  
 </template>
 
 <script setup>
@@ -33,52 +32,59 @@ import MapCard from "@/components/MapCard";
 import DayForecastCarousel from "@/components/DayForecastCarousel";
 import SunCard from "@/components/SunCard";
 import DayForecast from "@/components/DayForecast";
-import ErrorCatcher from "@/components/ErrorCatcher"
+import ErrorCatcher from "@/components/ErrorCatcher";
 import { loadWeather } from "@/plugins/api.js";
-import { averageWindSpeed, formatedTemperature } from "@/plugins/naturalCondition";
+import {
+  averageWindSpeed,
+  formatedTemperature,
+} from "@/plugins/naturalCondition";
 import { ref } from "vue";
 
-  const card = ref({})
-  const error = ref(false)
+const card = ref({});
+const error = ref(false);
 
-  const fetchWeather = async (name) => {
-    try {
-      error.value = false
-      const res = await loadWeather(name);
-      card.value = res.data;
-      card.value.forecast.forecastday.forEach((day) => {
-        day.hour.forEach((field) => {
-          field.time = field.time.split("").slice(11).join("");
-          field.temp_c = Math.round(field.temp_c);
-        });
+const fetchWeather = async (name) => {
+  try {
+    error.value = false;
+    const res = await loadWeather(name);
+    card.value = res.data;
+    card.value.forecast.forecastday.forEach((day) => {
+      day.hour.forEach((field) => {
+        field.time = field.time.split("").slice(11).join("");
+        field.temp_c = Math.round(field.temp_c);
       });
-      console.log(card.value);
-    } catch {
-      error.value = true
-      card.value = {}
-    }
-  };
+    });
+    console.log(card.value);
+  } catch {
+    error.value = true;
+    card.value = {};
+  }
+};
 
-  const minTemp = (dayNum) => {
-    return formatedTemperature(card.value.forecast.forecastday[dayNum].day.mintemp_c)
-  };
+const minTemp = (dayNum) => {
+  return formatedTemperature(
+    card.value.forecast.forecastday[dayNum].day.mintemp_c
+  );
+};
 
-  const maxTemp = (dayNum) => {
-    return formatedTemperature(card.value.forecast.forecastday[dayNum].day.maxtemp_c)
-  };
+const maxTemp = (dayNum) => {
+  return formatedTemperature(
+    card.value.forecast.forecastday[dayNum].day.maxtemp_c
+  );
+};
 
-  function avgWindSpeed(dayNum) {
-    return averageWindSpeed(card.value.forecast.forecastday[dayNum].hour);
-  };
+function avgWindSpeed(dayNum) {
+  return averageWindSpeed(card.value.forecast.forecastday[dayNum].hour);
+}
 
-  function facts(dayNum) {
-    const min = minTemp(dayNum);
-    const max = maxTemp(dayNum);
-    const wind = avgWindSpeed(dayNum);
-    return dayNum === 0
-      ? `Сегодня: ${min}...${max}°; ветер ${wind} м/с;`
-      : `Завтра: ${min}...${max}°; ветер ${wind} м/с;`;
-  };
+function facts(dayNum) {
+  const min = minTemp(dayNum);
+  const max = maxTemp(dayNum);
+  const wind = avgWindSpeed(dayNum);
+  return dayNum === 0
+    ? `Сегодня: ${min}...${max}°; ветер ${wind} м/с;`
+    : `Завтра: ${min}...${max}°; ветер ${wind} м/с;`;
+}
 </script>
 
 <style lang="sass" scoped>

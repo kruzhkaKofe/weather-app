@@ -45,27 +45,52 @@
 
 <script setup>
 import { moonPhases, indexUV, daylong } from "@/plugins/celestialBody";
-import { computed } from 'vue'
+import { computed } from "vue";
 
- 	const props = defineProps({
-    card: {
-      type: Object,
-      required: true,
-    },
-  })
+const props = defineProps({
+  card: {
+    type: Object,
+    required: true,
+  },
+});
 
-	const sunrise = computed(() => daylong(props.card.forecast.forecastday[0].astro.sunrise, props.card.forecast.forecastday[0].astro.sunset)[0])
-	const sunset = computed(() => daylong(props.card.forecast.forecastday[0].astro.sunrise, props.card.forecast.forecastday[0].astro.sunset)[1])
-	const dayLong = computed(() => daylong(props.card.forecast.forecastday[0].astro.sunrise, props.card.forecast.forecastday[0].astro.sunset)[2])
-	const moonPhase = computed(() => moonPhases(props.card.forecast.forecastday[0].astro.moon_phase)[0])
-	const orbitRotate = computed(() => moonPhases(props.card.forecast.forecastday[0].astro.moon_phase)[1])
+const sunrise = computed(
+  () =>
+    daylong(
+      props.card.forecast.forecastday[0].astro.sunrise,
+      props.card.forecast.forecastday[0].astro.sunset
+    )[0]
+);
+const sunset = computed(
+  () =>
+    daylong(
+      props.card.forecast.forecastday[0].astro.sunrise,
+      props.card.forecast.forecastday[0].astro.sunset
+    )[1]
+);
+const dayLong = computed(
+  () =>
+    daylong(
+      props.card.forecast.forecastday[0].astro.sunrise,
+      props.card.forecast.forecastday[0].astro.sunset
+    )[2]
+);
+const moonPhase = computed(
+  () => moonPhases(props.card.forecast.forecastday[0].astro.moon_phase)[0]
+);
+const orbitRotate = computed(
+  () => moonPhases(props.card.forecast.forecastday[0].astro.moon_phase)[1]
+);
 
-	const moonBackground = computed(() => {
-		return `background-image: url('${moonPhases(props.card.forecast.forecastday[0].astro.moon_phase)[2]}')`
-	})
-	
-	const uvIndex = computed(() => indexUV(props.card.forecast.forecastday[0].day.uv))
+const moonBackground = computed(() => {
+  return `background-image: url('${
+    moonPhases(props.card.forecast.forecastday[0].astro.moon_phase)[2]
+  }')`;
+});
 
+const uvIndex = computed(() =>
+  indexUV(props.card.forecast.forecastday[0].day.uv)
+);
 </script>
 
 <style lang="sass" scoped>

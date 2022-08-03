@@ -1,59 +1,53 @@
 <template>
-	<swiper
-	 	class="carousel"
-	 	:slidesPerView="8"
-		:spaceBetween="0"
-		:modules="modules"
-		:navigation="{
-			nextEl: '.swiper-button-next',
-			prevEl: '.swiper-button-prev',
-		}"
-	>
-		<swiper-slide 
-			class="carousel-slide" 
-			v-for="(hour, i) in card.forecast.forecastday[0].hour" 
-			:key="i" 
-		>
-			<p class="carousel-slide__time secondary-text" >
-				{{ hour.time }}
-			</p>
-			<img 
-				class="carousel-slide__image" 
-				:src="hour.condition.icon" 
-				alt="weather-condition"
-			>
-			<p 
-				v-if="hour.temp_c > 0"
-				class="carousel-slide__temp"
-			>
-				<strong>+{{ hour.temp_c }}</strong>
-			</p>
-			<p 
-				v-else 
-				class="carousel-slide__temp"
-			>
-				<strong>{{ hour.temp_c }}</strong>
-			</p>
-		</swiper-slide>
-		<div class="swiper-button-next"></div>
-		<div class="swiper-button-prev"></div>
-	</swiper>
+  <swiper
+    class="carousel"
+    :slidesPerView="8"
+    :spaceBetween="0"
+    :modules="modules"
+    :navigation="{
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    }"
+  >
+    <swiper-slide
+      class="carousel-slide"
+      v-for="(hour, i) in card.forecast.forecastday[0].hour"
+      :key="i"
+    >
+      <p class="carousel-slide__time secondary-text">
+        {{ hour.time }}
+      </p>
+      <img
+        class="carousel-slide__image"
+        :src="hour.condition.icon"
+        alt="weather-condition"
+      />
+      <p v-if="hour.temp_c > 0" class="carousel-slide__temp">
+        <strong>+{{ hour.temp_c }}</strong>
+      </p>
+      <p v-else class="carousel-slide__temp">
+        <strong>{{ hour.temp_c }}</strong>
+      </p>
+    </swiper-slide>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+  </swiper>
 </template>
 
 <script setup>
-	import { Swiper, SwiperSlide } from "swiper/vue";
-	import { Navigation } from "swiper";
-	import 'swiper/css';
-	import "swiper/css/navigation";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { Navigation } from "swiper";
+import "swiper/css";
+import "swiper/css/navigation";
 
-	const props = defineProps({
-		card: {
-			type: Object,
-			required: true,
-		},
-	})
+const props = defineProps({
+  card: {
+    type: Object,
+    required: true,
+  },
+});
 
-	const modules = [Navigation]
+const modules = [Navigation];
 </script>
 
 <style lang="sass" scoped>
@@ -86,6 +80,6 @@
 			margin-top: 10px
 			margin-bottom: 10px
 
-		&__temp::after 
+		&__temp::after
 			content: '\00B0'
 </style>

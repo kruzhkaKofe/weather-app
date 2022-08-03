@@ -8,29 +8,28 @@
 <script setup>
 import { onMounted, ref } from "vue";
 
-  const emit = defineEmits(['findWeatherInCity'])
+const emit = defineEmits(["findWeatherInCity"]);
 
-  const name = ref("");
-  const date = ref("");
+const name = ref("");
+const date = ref("");
 
-  const currentDate = () => {
-    const year = new Date().getFullYear();
-    const month = (new Date().getMonth() + 1).toString().padStart(2, "0");
-    const date = new Date().getDate().toString().padStart(2, "0");
-    return `${date}.${month}.${year}`;
-  };
+const currentDate = () => {
+  const year = new Date().getFullYear();
+  const month = (new Date().getMonth() + 1).toString().padStart(2, "0");
+  const date = new Date().getDate().toString().padStart(2, "0");
+  return `${date}.${month}.${year}`;
+};
 
-  const findWeather = () => {
-    emit("findWeatherInCity", name.value, date.value);
-    name.value = "";
-  };
+const findWeather = () => {
+  emit("findWeatherInCity", name.value, date.value);
+  name.value = "";
+};
 
-  onMounted(() => {
-    name.value = "Izhevsk";
-    date.value = currentDate();
-    findWeather();
-  });
-
+onMounted(() => {
+  name.value = "Moscow";
+  date.value = currentDate();
+  findWeather();
+});
 </script>
 
 <style lang="sass" scoped>
